@@ -1,12 +1,13 @@
 import { Router } from "express";
 
-import { getMetahumanos, getMetahumanoById, createMetahumano, updateMetahumano, deleteMetahumano } from "../controllers/controller_metahumano.js";
+import * as controlador_metahumano from "../controladores/controlador_metahumano.js";
+
 const router = Router();
 
-router.get('/', getMetahumanos);
-router.get('/:id', getMetahumanoById);
-router.post('/', createMetahumano);
-router.put('/:id', updateMetahumano);
-router.delete('/:id', deleteMetahumano);
+router.get('/', controlador_metahumano.getMetahumanos);
+router.get('/:id', controlador_metahumano.getMetahumanoById);
+router.post('/', controlador_metahumano.createMetahumano);
+router.put('/:id', controlador_metahumano.actualizarMetahumano);
+router.delete('/:id', controlador_metahumano.eliminarMetaHumanoController);
 
 export const router_metahumano = router;
