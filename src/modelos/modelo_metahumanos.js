@@ -23,7 +23,7 @@ export const createMetahumano = (metahumanoData) => {
     return conexion.promise().query(sql, parametros);
 };
 
-export const updateMetahumano = (id, metahumanoData) => {
+export const updateMetahumano = (Id_MetaHumano, metahumanoData) => {
     const sql = 'UPDATE metahumano SET Nombre_Metahumano = ?, Alias = ?, Tipo = ?, Actividad = ?, Ultimo_Avistamiento = ? WHERE Id_MetaHumano = ?';
     const parametros = [
         metahumanoData.Nombre_Metahumano,
