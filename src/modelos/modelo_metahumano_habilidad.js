@@ -24,19 +24,19 @@ export const getMetaHumano_HabilidadById_Habilidad = (Id_Habilidad) =>{
 };
 
 export const createMetahumano_Habilidad = (Metahumano_Habilidad_Data) =>{
-    const sql = 'Insert Into Metahumano_Habilidad Id_Metahumano, Id_Habilidad Values (?,?);'
+    const sql = 'Insert Into Metahumano_Habilidad (Id_Metahumano, Id_Habilidad) Values (?,?);'
     const parametros = [
         Metahumano_Habilidad_Data.Id_Metahumano,
         Metahumano_Habilidad_Data.Id_Habilidad
     ];
-    return conexion.promise(),query(sql,parametros);
+    return conexion.promise().query(sql,parametros);
 };
 
-export const deleteHabilidad = (Id_Habilidad, Id_Metahumano) => {
+export const deleteMetahumano_Habilidad = (Id_Habilidad, Id_Metahumano) => {
     const sql = 'Delete From Metahumano_Habilidad Where Id_Metahumano = ? AND Id_Habilidad = ?'
     const parametros = [
         Id_Habilidad,
         Id_Metahumano
     ];
-    return conexion.promise(),query(sql,parametros);
+    return conexion.promise().query(sql,parametros);
 };

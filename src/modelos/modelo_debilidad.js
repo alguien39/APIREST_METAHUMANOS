@@ -1,6 +1,6 @@
 import conexion from '../configuracion/bd.js'
 
-export const getHabilidad = () =>{
+export const getDebilidad = () =>{
     const sql = 'Select * From Debilidad'
     return conexion.promise().query(sql);
 };
@@ -11,7 +11,7 @@ export const getDebilidadById = (id) => {
 };
 
 export const createDebilidad = (DebilidadData) =>{
-    const sql = 'Insert Into Debilidad Id_Debilidad, Nombre_Debilidad, Descripcion_Debilidad, VALUES (?, ?, ?)'
+    const sql = 'Insert Into Debilidad (Id_Debilidad, Nombre_Debilidad, Descripcion_Debilidad) VALUES (?, ?, ?)'
     const parametros = [
         DebilidadData.Id_Debilidad,
         DebilidadData.Nombre_Debilidad,
@@ -23,7 +23,7 @@ export const createDebilidad = (DebilidadData) =>{
 export const updateDebilidad = (Id_Debilidad, DebilidadData) =>{
     const sql = 'Update Debilidad Set Nombre_Debilidad = ?, Descripcion_Debilidad = ? Where Id_Debilidad = ?'
     const parametros = [
-        DebilidadDataData.Nombre_Debilidad,
+        DebilidadData.Nombre_Debilidad,
         DebilidadData.Descripcion_Debilidad,
         Id_Debilidad
     ];

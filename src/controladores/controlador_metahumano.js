@@ -16,7 +16,7 @@ export const getMetahumanoById = async (req, res, next) => {
         const {id} = req.params;
         const [rows] = await modelo.getMetahumanoById(id);
         if(rows.length <= 0) {
-            res.status(404).json({message: 'Metahumano no encontrado'})
+            return res.status(404).json({message: 'Metahumano no encontrado'})
         }
         res.json(rows);
     }
@@ -40,8 +40,7 @@ export const actualizarMetahumano = async (req, res, next) =>{
     try{
         const { id } = req.params;
         await modelo.updateMetaHumano(id, req.body);
-
-        res.json({ mensaje: "MetaHumano actualizado correctamente" });
+        res.json({ message: "MetaHumano actualizado correctamente" });
     }
     catch(error){
         res.status(500).json({error:'Error al actualizar metahumano'})
@@ -53,9 +52,9 @@ export const eliminarMetaHumanoController = async (req, res) => {
     try {
         const { id } = req.params;
         await modelo.deleteMetaHumano(id);
-        res.json({ mensaje: "MetaHumano eliminado correctamente" });
+        res.json({ message: "MetaHumano eliminado correctamente" });
     } catch (error) {
-        res.status(500).json({ error: "Error al eliminar metahumano" });
+        res.status(500).json({ message: "Error al eliminar metahumano" });
         next(error);
     }
 };

@@ -11,7 +11,7 @@ export const getHabilidadById = (id) => {
 };
 
 export const createHabilidad = (HabilidadData) =>{
-    const sql = 'Insert Into Habilidad Id_Habilidad, Nombre_Habilidad, Descripcion_Habilidad, VALUES (?, ?, ?)'
+    const sql = 'Insert Into (Habilidad Id_Habilidad, Nombre_Habilidad, Descripcion_Habilidad) VALUES (?, ?, ?)'
     const parametros = [
         HabilidadData.Id_Habilidad,
         HabilidadData.Nombre_Habilidad,
