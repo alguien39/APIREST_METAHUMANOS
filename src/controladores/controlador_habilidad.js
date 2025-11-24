@@ -17,6 +17,7 @@ export const getHabilidadById = async(req, res, next)=>{
         if(rows.length <= 0){
             return res.status(404).json({message:`Habilidad: "${id}" no encontrada`});
         }
+        res.json(rows);
     } catch (error) {
         next(error);        
     }
@@ -38,7 +39,18 @@ export const actualizarHabilidad = async(req,res,next)=>{
         await modelo.updateHabilidad(id, req.body);
         res.json({message:"Habilidad Actualizada Correctamete"});
     } catch (error) {
-        res.status(500).json({message:"Erroal al actualizar Habilidad"});
+        res.status(500).json({message:"Error al actualizar Habilidad"});
+        next(error);
+    }
+};
+
+export const eliminarHabilidad = async(req,res,next)=>{
+    try {
+        const {id} = req.params;
+        await modelo.deleteHabilidad(id);
+        res.json({message:"Habilidad Eliminada"})
+    } catch (error) {
+        res.status(500).json({message:"Error al actualizar Habilidad"});
         next(error);
     }
 };
