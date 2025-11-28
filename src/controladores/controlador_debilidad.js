@@ -3,6 +3,7 @@ import * as modelo from '../modelos/modelo_debilidad.js';
 export const getDebilidad = async (req, res, next) =>{
     try{
         const[rows] = await modelo.getDebilidad();
+        res.status(200);
         res.json(rows);
     }
     catch(error){
@@ -16,12 +17,12 @@ export const getDebilidadById = async (req, res, next) =>{
         const {id} = req.params;
         const [rows] =  await modelo.getDebilidadById(id);
         if(rows.length <= 0){
-            throw new Error(`Error: Debilidad "${id}" no encontrada`);
+            return res.status(204).json({error: `Debilidad con id ${id} no encontrada`});
         }
+        res.status(200);
         res.json(rows);
     }
     catch(error){
-        return res.status(404)
         next(error);
     }
 };
@@ -41,6 +42,7 @@ export const actualizarDebilidad = async (req, res, next) =>{
     try{
         const {id} = req.params;
         await modelo.updateDebilidad(id, req.body);
+        res.status(200);
         res.json({message: "Debilidad actualizada correctamente"});
     }
     catch(error){
@@ -53,6 +55,7 @@ export const eliminarDebilidad = async (req, res, next) => {
     try {
         const {id} = req.params;
         await modelo.deleteDebilidad(id);
+        res.status(200);
         res.json({message: "Debilidad eleminiada correctamente"});
     } catch (error) {
         res.status(500).json({message:"Error al eliminar Debilidad"});
