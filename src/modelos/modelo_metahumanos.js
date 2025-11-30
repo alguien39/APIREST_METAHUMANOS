@@ -11,7 +11,7 @@ export const getMetahumanoById = (id) => {
 };
 
 export const createMetahumano = (metahumanoData) => {
-    const sql = 'INSERT INTO (metahumano Id_MetaHumano, Nombre_Metahumano, Alias, Tipo, Actividad, Ultimo_Avistamiento) VALUES (?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO metahumano (Id_MetaHumano, Nombre_Metahumano, Alias, Tipo, Actividad, Ultimo_Avistamiento) VALUES (?, ?, ?, ?, ?, ?)';
     const parametros = [
         metahumanoData.Id_MetaHumano,
         metahumanoData.Nombre_Metahumano,

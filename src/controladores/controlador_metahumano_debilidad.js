@@ -3,6 +3,7 @@ import * as modelo from '../modelos/modelo_metahumano_debilidad.js';
 export const getMetaHumano_Debilidad = async(req,res,next)=>{
     try {
         const [rows] = await modelo.getMetaHumano_Debilidad();
+        res.status(200);
         res.json(rows);
     } catch (error) {
         res.status(404).json({message:"Debilidades de metahumanos no encontradas"});
@@ -15,8 +16,9 @@ export const getMetaHumano_DebilidadById_Debilidad = async(req,res,next)=>{
         const {id} = req.params;
         const [rows] = await modelo.getMetaHumano_DebilidadById_Debilidad(id);
         if(rows.length <= 0) {
-            res.status(404).json({message: `Metahumanos con la debilidad ${id} no encontrados`});
+            res.status(204).json({message: `Metahumanos con la debilidad ${id} no encontrados`});
         }
+        res.status(200);
         res.json(rows);
     } catch (error) {
         next(error)
@@ -28,8 +30,9 @@ export const getMetaHumano_DebilidadById_Metahumano = async(req,res,next)=>{
         const {id} = req.params;
         const [rows] = await modelo.getMetaHumano_DebilidadById_Metahumano(id);
         if(rows.length <= 0) {
-            res.status(404).json({message: `Debilidades del metahumano ${id} no encontradas`});
+            res.status(204).json({message: `Debilidades del metahumano ${id} no encontradas`});
         }
+        res.status(200);
         res.json(rows);
     } catch (error) {
         next(error)
@@ -50,6 +53,7 @@ export const eliminarMetahumanoDebilidad = async(req,res,next)=>{
     try {
         const { id_metahumano, id_debilidad } = req.params;
         await modelo.deleteMetahumano_Debilidad(id_debilidad,id_metahumano);
+        res.status(200);
         res.json({ mensaje: "MetaHumano y su debilidad eliminados correctamente" });
     } catch (error) {
         res.status(500).json({ error: "Error al eliminar MetaHumano y su debilidad" });
