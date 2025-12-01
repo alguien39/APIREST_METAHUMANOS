@@ -4,7 +4,7 @@ import { AppError } from "../utils/AppError.js";
 export const getDebilidad = async (req, res, next) =>{
     try{
         const[rows] = await modelo.getDebilidad();
-        if (rows.length < 0){
+        if (rows.length = 0){
             throw new AppError("Debilidades no encontradas", 404);
         }
         res.status(200).json(rows);

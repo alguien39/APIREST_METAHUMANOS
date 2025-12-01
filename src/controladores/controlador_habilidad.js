@@ -1,15 +1,13 @@
 import * as modelo from '../modelos/modelo_habilidad.js'
+import { AppError } from '../utils/AppError.js';
 
 export const getHabilidades = async(req, res, next)=>{
     try {
         const [rows] = await modelo.getHabilidad();
-        if(rows.length <= 0){
-            res.status(204);
+        if(rows.length = 0){
+            throw new AppError("Habilidades no encontradas", 404);
         }
-        else{
-            res.status(200);
-        }
-        res.json(rows);
+        res.status(200).json(rows);
     } catch (error) {
         next(error);
     }
@@ -19,11 +17,10 @@ export const getHabilidadById = async(req, res, next)=>{
     try {
         const {id} = req.params;
         const [rows] = await modelo.getHabilidadById(id);
-        if(rows.length <= 0){
-            return res.status(204).json({message:`Habilidad: "${id}" no encontrada`});
+        if(rows.length = 0){
+            throw new AppError(`Habilidad con id ${id} no encontrada`, 404);
         }
-        res.status(200);
-        res.json(rows);
+        res.status(200).json(rows);
     } catch (error) {
         next(error);        
     }
@@ -32,9 +29,8 @@ export const getHabilidadById = async(req, res, next)=>{
 export const createHabilidad = async(req,res,next)=>{
     try {
         await modelo.createHabilidad(req.body);
-        res.status(201).json({message:"Habilidad creado exitosamente"});
+        res.status(201).json({message:"Habilidad creada exitosamente"});
     } catch (error) {
-        res.status(500).json({message:"Error al crear habilidad"});
         next(error);
     }
 };
@@ -46,7 +42,6 @@ export const actualizarHabilidad = async(req,res,next)=>{
         res.status(200);
         res.json({message:"Habilidad Actualizada Correctamete"});
     } catch (error) {
-        res.status(500).json({message:"Error al actualizar Habilidad"});
         next(error);
     }
 };
@@ -55,10 +50,8 @@ export const eliminarHabilidad = async(req,res,next)=>{
     try {
         const {id} = req.params;
         await modelo.deleteHabilidad(id);
-        res.status(200);
-        res.json({message:"Habilidad Eliminada"})
+        res.status(200).json({message:"Habilidad Eliminada"})
     } catch (error) {
-        res.status(500).json({message:"Error al actualizar Habilidad"});
         next(error);
     }
 };

@@ -1,18 +1,15 @@
 import * as modelo from '../modelos/modelo_metahumano_habilidad.js';
+import { AppError } from '../utils/AppError.js';
 
 export const getMetahumanos_habilidad = async (req,res,next)=>{
     try{
         const[rows] = await modelo.getMetaHumano_Habilidad();
-        if(rows.length <= 0){
-            res.status(204).json({message:"habilidades de metahumanos encontradas pero vacías"});
+        if(rows.length = 0){
+            throw new AppError("habilidades de metahumanos encontradas pero vacías", 204);
         }
-        else{
-            res.status(200);
-        }
-        res.json(rows);
+        res.status(200).json(rows);
     }
     catch(error){
-        res.status(404).json({error:"habilidades de metahumanos no encontradas"});
         next(error);
     }
 };
@@ -22,12 +19,9 @@ export const getMetahumanos_habilidadById_Metahumano= async (req,res,next)=>{
         const{id} = req.params;
         const [rows] = await modelo.getMetaHumano_HabilidadById_Metahumano(id);
         if(rows.length <= 0 ){
-            res.status(204).json({message:`habilidades del metahumano ${id} no encontrado`});
+            throw new AppError(`habilidades del metahumano ${id} no encontrado`,204);
         }
-        else{
-            res.status(200);
-        }
-        res.json(rows);
+        res.status(200).json(rows);
     } catch (error) {
         next(error);
     }
@@ -38,12 +32,9 @@ export const getMetahumanos_habilidadById_Habilidad= async (req,res,next)=>{
         const{id} = req.params;
         const [rows] = await modelo.getMetaHumano_HabilidadById_Habilidad(id);
         if(rows.length <= 0 ){
-            res.status(204).json({message:`metahumanos con la habilidad ${id} no encontrados`});
+            throw new AppError(`metahumanos con la habilidad ${id} no encontrados`,204);
         }
-        else{
-            res.status(200);
-        }
-        res.json(rows);
+        res.status(200).json(rows);
     } catch (error) {
         next(error);
     }
@@ -52,10 +43,8 @@ export const getMetahumanos_habilidadById_Habilidad= async (req,res,next)=>{
 export const createMetahumano_Habilidad= async (req,res,next)=>{
     try {
         await modelo.createMetahumano_Habilidad(req.body);
-        res.status(201);
-        res.json({message:"Habilidad asociada a metahumano correctamente"});
+        res.status(201).json({message:"Habilidad asociada a metahumano correctamente"});
     } catch (error) {
-        res.status(500).json({error:'Error al asignar la habilidad a el metahumano'})
         next(error);
     }
 };
@@ -63,9 +52,8 @@ export const createMetahumano_Habilidad= async (req,res,next)=>{
 export const eliminarMetahumano_Habilidad = async (req,res,next)=>{
     try {
         const {id_Metahumano, Id_Habilidad} = req.params;
-        const [rows] = await modelo.deleteMetahumano_Habilidad(Id_Habilidad, id_Metahumano);
-        res.status(200);
-        res.json({message:"Habilidad eliminada del metahumano exitosamente"});
+        await modelo.deleteMetahumano_Habilidad(Id_Habilidad, id_Metahumano);
+        res.status(200).json({message:"Habilidad eliminada del metahumano exitosamente"});
     } catch (error) {
         res.status(500).json({message:"Error al eliminar habilidad"});
         next(error);
