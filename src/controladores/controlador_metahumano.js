@@ -49,7 +49,7 @@ export const actualizarMetahumano = async (req, res, next) =>{
     }
 };
 
-export const eliminarMetaHumanoController = async (req, res) => {
+export const eliminarMetaHumanoController = async (req, res, next) => {
     try {
         const { id } = req.params;
         await modelo.deleteMetaHumano(id);

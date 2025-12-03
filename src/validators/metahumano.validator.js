@@ -13,7 +13,7 @@ export const validarCrearMetahumano = [
     .optional()
     .isLength({max:20})
     .withMessage("El nombre del metahumano debe tener entre 3 y 20 caracteres")
-    .Letters()
+    .isAlpha()
     .withMessage("El nombre del metahumano solo debe contener letras"),
     body("Alias")
     .notEmpty()
@@ -38,7 +38,7 @@ export const validarCrearMetahumano = [
     .withMessage("El ID del metahumano debe ser alfanumérico"),
 ];
 
-export const updateMetahumano = [
+export const validarUpdateMetahumano = [
     body("Nombre_Metahumano")
     .optional()
     .isLength({max:20})
@@ -61,7 +61,7 @@ export const updateMetahumano = [
     .optional()
     .isDate()
     .withMessage("La fecha de ultimo avistamiento debe ser una fecha valida"),
-    body('Id_MetaHumano')
+    param('Id_MetaHumano')
     .isLength({min:6,max:6})
     .withMessage("El ID del metahumano debe tener exactamente 6 caracteres")
     .isAlphanumeric()
