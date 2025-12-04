@@ -22,7 +22,7 @@ export const validarCrearDebilidad = [
     .isAlpha()
     .withMessage("El nombre de la debilidad solo debe contener letras"),
     body("Descripcion_Debilidad")
-    .notEmpty
+    .notEmpty()
     .withMessage("La descripcion es obligatoria")
     .isLength({max:256})
     .withMessage("El numero de caracteres maximo para la descripcion es de 256")
@@ -44,7 +44,7 @@ export const validarUpdateDebilidad = [
     .isAlpha()
     .withMessage("El nombre de la debilidad solo debe contener letras"),
     body("Descripcion_Debilidad")
-    .notEmpty
+    .notEmpty()
     .withMessage("La descripcion es obligatoria")
     .isLength({max:256})
     .withMessage("El numero de caracteres maximo para la descripcion es de 256")

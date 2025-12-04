@@ -22,7 +22,7 @@ export const validarCrearHabilidad = [
     .isAlpha()
     .withMessage("El nombre de la habilidad solo debe contener letras"),
     body("Descripcion_habilidad")
-    .notEmpty
+    .notEmpty()
     .withMessage("La descripcion es obligatoria")
     .isLength({max:256})
     .withMessage("El numero de caracteres maximo para la descripcion es de 256")
@@ -44,7 +44,7 @@ export const validarUpdateHabilidad = [
     .isAlpha()
     .withMessage("El nombre de la habilidad solo debe contener letras"),
     body("Descripcion_habilidad")
-    .notEmpty
+    .notEmpty()
     .withMessage("La descripcion es obligatoria")
     .isLength({max:256})
     .withMessage("El numero de caracteres maximo para la descripcion es de 256")

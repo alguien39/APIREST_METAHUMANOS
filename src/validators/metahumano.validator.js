@@ -19,14 +19,14 @@ export const validarCrearMetahumano = [
     .notEmpty()
     .withMessage("El alias del metahumano es obligatorio")
     .isLength({max:20})
-    .whithMessage("El alias del metahumano debe tener como maximo 20 caracteres"),
+    .withMessage("El alias del metahumano debe tener como maximo 20 caracteres"),
     body("Tipo")
     .isIn(['Heroe','Villano','Antiheroe'])
-    .whithMessage("El tipo de metahumano debe ser 'Heroe', 'Villano' o 'Antiheroe'"),
+    .withMessage("El tipo de metahumano debe ser 'Heroe', 'Villano' o 'Antiheroe'"),
     body("Actividad")
     .optional()
     .isIn(['Activo','Inactivo','Fallecido'])
-    .whithMessage("La actividad del metahumano debe ser 'Activo', 'Inactivo' o 'Fallecido'"),
+    .withMessage("La actividad del metahumano debe ser 'Activo', 'Inactivo' o 'Fallecido'"),
     body('Ultimo_Avistamiento')
     .optional()
     .isDate()
@@ -43,20 +43,20 @@ export const validarUpdateMetahumano = [
     .optional()
     .isLength({max:20})
     .withMessage("El nombre del metahumano debe tener entre 3 y 20 caracteres")
-    .Letters()
+    .isAlpha()
     .withMessage("El nombre del metahumano solo debe contener letras"),
     body("Alias")
     .notEmpty()
     .withMessage("El alias del metahumano es obligatorio")
     .isLength({max:20})
-    .whithMessage("El alias del metahumano debe tener como maximo 20 caracteres"),
+    .withMessage("El alias del metahumano debe tener como maximo 20 caracteres"),
     body("Tipo")
     .isIn(['Heroe','Villano','Antiheroe'])
-    .whithMessage("El tipo de metahumano debe ser 'Heroe', 'Villano' o 'Antiheroe'"),
+    .withMessage("El tipo de metahumano debe ser 'Heroe', 'Villano' o 'Antiheroe'"),
     body("Actividad")
     .optional()
     .isIn(['Activo','Inactivo','Fallecido'])
-    .whithMessage("La actividad del metahumano debe ser 'Activo', 'Inactivo' o 'Fallecido'"),
+    .withMessage("La actividad del metahumano debe ser 'Activo', 'Inactivo' o 'Fallecido'"),
     body('Ultimo_Avistamiento')
     .optional()
     .isDate()
