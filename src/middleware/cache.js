@@ -7,15 +7,23 @@ export const cache = (keyPrefix) => {
 
             const cachedData = await redisClient.get(cacheKey);
 
-            res.sendJson = res.Json;
-            res.Json = (data) => {
-                redisClient.setEx(cacheKey, 30, JSON.stringify(data));
-                res.sendJson(data);
+            if (cachedData) {
+                res.set("X-Cache", "HIT");
+                return res.status(200).json(JSON.parse(cachedData));
+            }
+
+            res.set("X-Cache", "MISS");
+
+            const originalJson = res.json.bind(res);
+            res.json = (data) => {
+                redisClient.setEx(cacheKey, 60, JSON.stringify(data));
+                return originalJson(data);
             };
+
             next();
         } catch (error) {
             console.error("Error en middleware de cache:", error);
             next();
         }
-    }
-}
+    };
+};
