@@ -1,6 +1,6 @@
-import conexion from "../configuracion/bd";
+import conexion from "../configuracion/bd.js";
 
-export const loginUsuario = (Email,Password) => {
-    const sql = 'SELECT * FROM usuario WHERE Nombre_Usuario = ? AND Contrasena = ?';
-    return conexion.promise().query(sql, [Email,Password]);
+export const loginUsuario = (Email) => {
+    const sql = 'SELECT * FROM usuario WHERE Nombre_Usuario = ?';
+    return conexion.promise().query(sql, [Email]);
 };

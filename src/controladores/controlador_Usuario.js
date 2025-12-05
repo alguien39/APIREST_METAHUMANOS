@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import {generarToken} from "../utils/token.js";
+import {generarToken} from "../utils/jwt.js";
 import {loginUsuario} from "../modelos/modelo_usuario.js";
-import {AppError} from "../utils/error.js";
+import {AppError} from "../utils/AppError.js";
 
 export const login = async (req, res, next) => {
     try {
@@ -9,7 +9,7 @@ export const login = async (req, res, next) => {
         const [rows] = await loginUsuario(Email, Password);
 
         if (rows.length == 0 ){
-            throw new AppError('Credenciales inválidas', 401);
+            throw new AppError('Credenciales inválidas: USUARIO NO ENCONTRADO', 401);
         }
 
         const usuario = rows[0];

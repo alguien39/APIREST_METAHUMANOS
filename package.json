@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "mocha \"./Tests/module.test.js\" --exit --timeout 5000",
-    "test:watch": "mocha \"./Tests/module.test.js\" --watch"
+    "test:watch": "mocha \"./Tests/module.test.js\" --watch",
+    "start": "node ./src/server.js"
   },
   "repository": {
     "type": "git",

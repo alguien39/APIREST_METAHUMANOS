@@ -7,6 +7,7 @@ import {router_Habilidad} from './rutas/router_habilidad.js';
 import {router_debilidad} from './rutas/router_debilidad.js';
 import {router_metahumano_debilidad} from './rutas/router_metahumano_debilidad.js';
 import {router_metahumano_habilidad} from './rutas/router_metahumano_habilidad.js';
+import {router_auth} from './rutas/router_auth.js'
 import { errorhandler } from './middleware/errorhandler.js';
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 //End Points
+app.use('/user', router_auth);
 app.use('/metahumano', router_metahumano);
 app.use('/habilidad', router_Habilidad);
 app.use('/metahumano_habilidad', router_metahumano_habilidad);

@@ -5,4 +5,4 @@ const router = Router();
 
 router.post('/login', login);
 
-export default router_auth = router;
+export const router_auth = router;
