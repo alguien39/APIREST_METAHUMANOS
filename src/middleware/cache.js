@@ -4,7 +4,6 @@ export const cache = (keyPrefix) => {
     return async (req, res, next) => {
         try {
             const cacheKey = `${keyPrefix}:${req.originalUrl}`;
-
             const cachedData = await redisClient.get(cacheKey);
 
             if (cachedData) {
