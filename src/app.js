@@ -13,7 +13,6 @@ import { errorhandler } from './middleware/errorhandler.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());
@@ -25,6 +24,14 @@ app.use('/habilidad', router_Habilidad);
 app.use('/metahumano_habilidad', router_metahumano_habilidad);
 app.use('/debilidad', router_debilidad);
 app.use('/metahumano_debilidad', router_metahumano_debilidad);
+
+//Enb point para rutas inexistentes
+app.use('*', (req, res) => {
+    res.status(404).json({ 
+        error: 'Ruta no encontrada',
+        path: req.originalUrl 
+    });
+});
 
 //Manejador de errores
 app.use(errorhandler);
