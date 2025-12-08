@@ -4,7 +4,7 @@ import { AppError } from '../utils/AppError.js';
 export const getMetaHumano_Debilidad = async(req,res,next)=>{
     try {
         const [rows] = await modelo.getMetaHumano_Debilidad();
-        if(rows.length = 0){
+        if(rows.length === 0){
             throw new AppError("Ninguna debilidad de metahumanos encontrada",404);
         }
         res.status(200).json(rows);
@@ -17,8 +17,8 @@ export const getMetaHumano_DebilidadById_Debilidad = async(req,res,next)=>{
     try {
         const {id} = req.params;
         const [rows] = await modelo.getMetaHumano_DebilidadById_Debilidad(id);
-        if(rows.length = 0) {
-            throw new AppError(`Metahumanos con la debilidad ${id} no encontrados`, 204);
+        if(rows.length === 0) {
+            throw new AppError(`Metahumanos con la debilidad ${id} no encontrados`, 404);
         }
         res.status(200).json(rows);
     } catch (error) {
@@ -42,7 +42,7 @@ export const getMetaHumano_DebilidadById_Metahumano = async(req,res,next)=>{
 export const createMetahumano_Debilidad = async(req,res,next)=>{
     try {
         await modelo.createMetahumano_Debilidad(req.body);
-        res.status(202).json({message:"Debilidad asignada al metahumano correctamente"});
+        res.status(201).json({message:"Debilidad asignada al metahumano correctamente"});
     } catch (error) {
         next(error);
     }

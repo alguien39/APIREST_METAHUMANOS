@@ -8,10 +8,13 @@ import { auth } from "../middleware/auth.js"
 
 const router = Router();
 
+//Rutas publicas
 router.get('/', cache("Metahumanos"),controlador_metahumano.getMetahumanos);
 router.get('/:id', validarIdMetahumano, validarCampos, cache("Metahumano"),controlador_metahumano.getMetahumanoById);
-router.post('/',auth, validarCrearMetahumano, validarCampos,controlador_metahumano.createMetahumano);
-router.put('/:id',auth, validarUpdateMetahumano, validarCampos,controlador_metahumano.actualizarMetahumano);
-router.delete('/:id',auth, validarIdMetahumano, validarCampos,controlador_metahumano.eliminarMetaHumanoController);
+
+//Rutas protegidas
+router.post('/', auth, validarCrearMetahumano, validarCampos,controlador_metahumano.createMetahumano);
+router.put('/:id', auth, validarUpdateMetahumano, validarCampos,controlador_metahumano.actualizarMetahumano);
+router.delete('/:id', auth, validarIdMetahumano, validarCampos,controlador_metahumano.eliminarMetaHumanoController);
 
 export const router_metahumano = router;

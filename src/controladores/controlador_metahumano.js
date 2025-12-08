@@ -4,8 +4,8 @@ import { AppError } from '../utils/AppError.js';
 export const getMetahumanos = async (req, res, next) =>{
     try{
         const [rows] = await modelo.getMetahumanos();
-        if(rows.length <= 0){
-            throw new AppError("Ningun Metahumano Encontrado",204)
+        if(rows.length === 0){
+            throw new AppError("Ningun Metahumano Encontrado",404)
         }
        res.status(200).json(rows);
     }
@@ -52,8 +52,11 @@ export const actualizarMetahumano = async (req, res, next) =>{
 export const eliminarMetaHumanoController = async (req, res, next) => {
     try {
         const { id } = req.params;
-        await modelo.deleteMetaHumano(id);
-        res.status(200).json("MetaHumano eliminado correctamente");
+        const resultado = await modelo.deleteMetaHumano(id);
+        if (resultado.affectedRows === 0) {
+            throw new AppError(`Metahumano con id ${id} no encontrado`, 404);
+        }
+        res.status(200).json({message: "MetaHumano eliminado correctamente"});
     } catch (error) {
         next(error);
     }
