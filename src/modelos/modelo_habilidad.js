@@ -11,13 +11,22 @@ export const getHabilidadById = (id) => {
 };
 
 export const createHabilidad = (HabilidadData) =>{
-    const sql = 'Insert Into Habilidad (Id_Habilidad, Nombre_Habilidad, Descripcion_Habilidad) VALUES (?, ?, ?)'
-    const parametros = [
-        HabilidadData.Id_Habilidad,
-        HabilidadData.Nombre_Habilidad,
-        HabilidadData.Descripcion_Habilidad
-    ];
-    return conexion.promise().query(sql, parametros);
+    const checkSql = 'SELECT COUNT(*) as count FROM Habilidad WHERE Id_Habilidad = ?';
+    
+    return conexion.promise().query(checkSql, [HabilidadData.Id_Habilidad])
+        .then(([rows]) => {
+            if (rows[0].count > 0) {
+                throw new Error(`Habilidad con ID ${HabilidadData.Id_Habilidad} ya existe`);
+            }
+            
+            const sql = 'INSERT INTO Habilidad (Id_Habilidad, Nombre_Habilidad, Descripcion_Habilidad) VALUES (?, ?, ?)';
+            const parametros = [
+                HabilidadData.Id_Habilidad,
+                HabilidadData.Nombre_Habilidad,
+                HabilidadData.Descripcion_Habilidad || null
+            ];
+            return conexion.promise().query(sql, parametros);
+        });
 };
 
 export const updateHabilidad = (Id_Habilidad, HabilidadData) =>{
@@ -31,6 +40,19 @@ export const updateHabilidad = (Id_Habilidad, HabilidadData) =>{
 };
 
 export const deleteHabilidad = (Id_Habilidad) => {
-    const sql = 'Delete From Habilidad Where Id_Habilidad = ?'
-    return conexion.promise().query(sql, [Id_Habilidad]);
+    const checkRelations = `
+        SELECT COUNT(*) as count 
+        FROM Metahumano_Habilidad 
+        WHERE Id_Habilidad = ?
+    `;
+    
+    return conexion.promise().query(checkRelations, [Id_Habilidad])
+        .then(([rows]) => {
+            if (rows[0].count > 0) {
+                throw new Error('No se puede eliminar la habilidad porque tiene metahumanos asociados');
+            }
+            
+            const sql = 'DELETE FROM Habilidad WHERE Id_Habilidad = ?';
+            return conexion.promise().query(sql, [Id_Habilidad]);
+        });
 }

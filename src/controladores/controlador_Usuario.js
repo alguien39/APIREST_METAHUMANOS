@@ -1,16 +1,13 @@
-import bcrypt from "bcryptjs";
-import {generarToken} from "../utils/jwt.js";
-import {loginUsuario} from "../modelos/modelo_usuario.js";
-import {AppError} from "../utils/AppError.js";
+import bcrypt from 'bcryptjs';
+import {generarToken} from '../utils/jwt.js';
+import {loginUsuario, crearUsuario} from '../modelos/modelo_usuario.js';
+import {AppError} from '../utils/AppError.js';
+import { response } from "express";
 
 export const login = async (req, res, next) => {
     try {
         const {Email, Password} = req.body;
         const [rows] = await loginUsuario(Email, Password);
-        
-        if (!Email || !Password) {
-            throw new AppError('Email y contraseña son requeridos', 400);
-        }
 
         if (rows.length === 0 ){
             throw new AppError('Credenciales inválidas: USUARIO NO ENCONTRADO', 401);
@@ -28,5 +25,14 @@ export const login = async (req, res, next) => {
         
     } catch (error) {
         next(error);
+    }
+};
+
+export const register = async (req, res, next) =>{
+    try {
+        await crearUsuario(req.body);
+        res.status(201).json({message:'Usuario Registrado Correctamente'})
+    } catch (error) {
+        next(error)
     }
 };
