@@ -1,17 +1,17 @@
 import conexion from '../configuracion/bd.js'
 
 export const getMetaHumano_Habilidad = () =>{
-    const sql = `Select Metahumano_Habilidad.Id_Metahumano, Metahumano.Alias, Metahumano_Habilidad.Id_Habilidad, Habilidad.Nombre_Habilidad 
-                    From Metahumano_Habilidad Join Habilidad On (Metahumano_Habilidad.Id_Habilidad = Habilidad.Id_Habilidad) Join Metahumano On (Metahumano_Habilidad.Id_Metahumano = Metahumano.Id_Metahumano)
-                    Order By Metahumano.Alias`
+    const sql = `Select metahumano_habilidad.Id_Metahumano, metahumano.Alias, metahumano_habilidad.Id_Habilidad, habilidad.Nombre_Habilidad 
+                    From metahumano_habilidad Join habilidad On (metahumano_habilidad.Id_Habilidad = habilidad.Id_Habilidad) Join metahumano On (metahumano_habilidad.Id_Metahumano = metahumano.Id_Metahumano)
+                    Order By metahumano.Alias`
     return conexion.promise().query(sql);
 };
 
 export const getMetaHumano_HabilidadById_Metahumano = (Id_Metahumano) =>{
-    const sql = `Select Metahumano_Habilidad.Id_Metahumano, Metahumano.Alias, Metahumano_Habilidad.Id_Habilidad, Habilidad.Nombre_Habilidad 
-                    From Metahumano_Habilidad Join Habilidad On (Metahumano_Habilidad.Id_Habilidad = Habilidad.Id_Habilidad) Join Metahumano On (Metahumano_Habilidad.Id_Metahumano = Metahumano.Id_Metahumano)
-                    Where Metahumano_Habilidad.Id_Metahumano = ?
-                    Order By Metahumano.Alias`
+    const sql = `Select metahumano_habilidad.Id_Metahumano, metahumano.Alias, metahumano_habilidad.Id_Habilidad, habilidad.Nombre_Habilidad 
+                    From metahumano_habilidad Join habilidad On (metahumano_habilidad.Id_Habilidad = habilidad.Id_Habilidad) Join metahumano On (metahumano_habilidad.Id_Metahumano = metahumano.Id_Metahumano)
+                    Where metahumano_habilidad.Id_Metahumano = ?
+                    Order By metahumano.Alias`
     return conexion.promise().query(sql, [Id_Metahumano]);
 };
 

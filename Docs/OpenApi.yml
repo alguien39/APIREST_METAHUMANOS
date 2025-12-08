@@ -71,7 +71,7 @@ paths:
                     type: object
                     properties:
                       id:
-                        type: integer
+                        type: string
                       nombre:
                         type: string
                       email:
@@ -80,6 +80,50 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+
+    /user/register:
+      post:
+        tags:
+          - Autenticación
+        summary: Registrar nuevo usuario
+        description: Crea un nuevo usuario en el sistema
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Id_Usuario
+                  - Email
+                  - Password
+                  - Rol
+                properties:
+                  Nombre:
+                    type: Id_Usuario
+                    example: "Us0001"
+                  Email:
+                    type: string
+                    format: email
+                    example: "alguien@ejemplo.com"
+                  Password:
+                    type: string
+                    format: password
+                    example: "password123"
+                  Rol:
+                    type: string
+                    example: "admin"
+        responses:
+          '201':
+            description: Usuario creado exitosamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/SuccessMessage'
+          '400':
+            $ref: '#/components/responses/BadRequest'
+          '401':
+            $ref: '#/components/responses/Unauthorized'
 
   # ========== METAHUMANOS ==========
   /metahumano:
@@ -684,24 +728,24 @@ components:
       description: ID del metahumano
       required: true
       schema:
-        type: integer
-        example: 1
+        type: string
+        example: "Mh0012"
     IdMetahumanoPath:
       name: id_metahumano
       in: path
       description: ID del metahumano
       required: true
       schema:
-        type: integer
-        example: 1
+        type: string
+        example: "Mh0012"
     IdMetahumanoPath2:
       name: id_metahumano
       in: path
       description: ID del metahumano
       required: true
       schema:
-        type: integer
-        example: 1
+        type: string
+        example: "Mh0012"
     IdHabilidad:
       name: id
       in: path
@@ -709,31 +753,31 @@ components:
       required: true
       schema:
         type: integer
-        example: 1
+        example: "Hb0005"
     IdHabilidadPath:
       name: id_habilidad
       in: path
       description: ID de la habilidad
       required: true
       schema:
-        type: integer
-        example: 1
+        type: string
+        example: "Hb0005"
     IdDebilidad:
       name: id
       in: path
       description: ID de la debilidad
       required: true
       schema:
-        type: integer
-        example: 1
+        type: string
+        example: "Db0005"
     IdDebilidadPath:
       name: id_debilidad
       in: path
       description: ID de la debilidad
       required: true
       schema:
-        type: integer
-        example: 1
+        type: string
+        example: "Db0005"
 
   responses:
     BadRequest:
@@ -794,8 +838,8 @@ components:
       type: object
       properties:
         Id_MetaHumano:
-          type: integer
-          example: 1
+          type: string
+          example: "Mh0012"
         Nombre_Metahumano:
           type: string
           example: "Clark Kent"
@@ -823,8 +867,8 @@ components:
         - Actividad
       properties:
         Id_MetaHumano:
-          type: integer
-          example: 1
+          type: string
+          example: "Mh0012"
         Nombre_Metahumano:
           type: string
           example: "Clark Kent"
@@ -866,8 +910,8 @@ components:
       type: object
       properties:
         Id_Habilidad:
-          type: integer
-          example: 1
+          type: string
+          example: "Hb0005"
         Nombre_Habilidad:
           type: string
           example: "Vuelo"
@@ -883,8 +927,8 @@ components:
         - Nombre_Habilidad
       properties:
         Id_Habilidad:
-          type: integer
-          example: 1
+          type: string
+          example: "Hb0005"
         Nombre_Habilidad:
           type: string
           example: "Vuelo"
@@ -908,8 +952,8 @@ components:
       type: object
       properties:
         Id_Debilidad:
-          type: integer
-          example: 1
+          type: string
+          example: "Db0005"
         Nombre_Debilidad:
           type: string
           example: "Kryptonita"
@@ -925,8 +969,8 @@ components:
         - Nombre_Debilidad
       properties:
         Id_Debilidad:
-          type: integer
-          example: 1
+          type: string
+          example: "Db0005"
         Nombre_Debilidad:
           type: string
           example: "Kryptonita"
@@ -951,14 +995,14 @@ components:
       type: object
       properties:
         Id_Metahumano:
-          type: integer
-          example: 1
+          type: string
+          example: "Mh0012"
         Alias:
           type: string
           example: "Superman"
         Id_Habilidad:
-          type: integer
-          example: 1
+          type: string
+          example: "Hb0005"
         Nombre_Habilidad:
           type: string
           example: "Vuelo"
@@ -970,24 +1014,24 @@ components:
         - Id_Habilidad
       properties:
         Id_Metahumano:
-          type: integer
-          example: 1
+          type: string
+          example: "Mh0012"
         Id_Habilidad:
-          type: integer
-          example: 1
+          type: string
+          example: "Hb0005"
 
     MetahumanoDebilidad:
       type: object
       properties:
         Id_Metahumano:
-          type: integer
-          example: 1
+          type: string
+          example: "Mh0012"
         Alias:
           type: string
           example: "Superman"
         Id_Debilidad:
-          type: integer
-          example: 1
+          type: string
+          example: "Db0005"
         Nombre_Debilidad:
           type: string
           example: "Kryptonita"
@@ -999,11 +1043,11 @@ components:
         - Id_Debilidad
       properties:
         Id_Metahumano:
-          type: integer
-          example: 1
+          type: string
+          example: "Mh0012"
         Id_Debilidad:
-          type: integer
-          example: 1
+          type: string
+          example: "Db0005"
 
   # Ejemplos de solicitudes
   requestBodies:
