@@ -1,10 +1,10 @@
 import { Router } from "express";
 
-import * as controlador_metahumano from "../controladores/controlador_metahumano.js";
+import * as controlador_metahumano from '../controladores/controlador_metahumano.js';
 import { validarCampos } from '../middleware/validarCampos.js';
 import { validarIdMetahumano, validarCrearMetahumano, validarUpdateMetahumano } from '../validators/metahumano.validator.js';
-import { cache } from "../middleware/cache.js";
-import { auth } from "../middleware/auth.js"
+import { cache } from '../middleware/cache.js';
+import { auth } from '../middleware/auth.js';
 
 const router = Router();
 

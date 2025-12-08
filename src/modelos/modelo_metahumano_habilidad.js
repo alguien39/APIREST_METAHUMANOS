@@ -2,29 +2,29 @@ import conexion from '../configuracion/bd.js'
 
 export const getMetaHumano_Habilidad = () =>{
     const sql = `Select Metahumano_Habilidad.Id_Metahumano, Metahumano.Alias, Metahumano_Habilidad.Id_Habilidad, Habilidad.Nombre_Habilidad 
-                    From Metahumano_Habilidad Join Habilidad On (Metahumano_Habilidad.Id_Habilidad = Habilidad. Id_Habilidad) Join Metahumano On (Metahumano_Habilidad.Id_Metahumano = Metahumano.Id_Metahumano)
-                    Order By Metahumano.Alias;`
+                    From Metahumano_Habilidad Join Habilidad On (Metahumano_Habilidad.Id_Habilidad = Habilidad.Id_Habilidad) Join Metahumano On (Metahumano_Habilidad.Id_Metahumano = Metahumano.Id_Metahumano)
+                    Order By Metahumano.Alias`
     return conexion.promise().query(sql);
 };
 
 export const getMetaHumano_HabilidadById_Metahumano = (Id_Metahumano) =>{
     const sql = `Select Metahumano_Habilidad.Id_Metahumano, Metahumano.Alias, Metahumano_Habilidad.Id_Habilidad, Habilidad.Nombre_Habilidad 
-                    From Metahumano_Habilidad Join Habilidad On (Metahumano_Habilidad.Id_Habilidad = Habilidad. Id_Habilidad) Join Metahumano On (Metahumano_Habilidad.Id_Metahumano = Metahumano.Id_Metahumano)
+                    From Metahumano_Habilidad Join Habilidad On (Metahumano_Habilidad.Id_Habilidad = Habilidad.Id_Habilidad) Join Metahumano On (Metahumano_Habilidad.Id_Metahumano = Metahumano.Id_Metahumano)
                     Where Metahumano_Habilidad.Id_Metahumano = ?
-                    Order By Metahumano.Alias;`
+                    Order By Metahumano.Alias`
     return conexion.promise().query(sql, [Id_Metahumano]);
 };
 
 export const getMetaHumano_HabilidadById_Habilidad = (Id_Habilidad) =>{
     const sql = `Select Metahumano_Habilidad.Id_Metahumano, Metahumano.Alias, Metahumano_Habilidad.Id_Habilidad, Habilidad.Nombre_Habilidad 
-                    From Metahumano_Habilidad Join Habilidad On (Metahumano_Habilidad.Id_Habilidad = Habilidad. Id_Habilidad) Join Metahumano On (Metahumano_Habilidad.Id_Metahumano = Metahumano.Id_Metahumano)
+                    From Metahumano_Habilidad Join Habilidad On (Metahumano_Habilidad.Id_Habilidad = Habilidad.Id_Habilidad) Join Metahumano On (Metahumano_Habilidad.Id_Metahumano = Metahumano.Id_Metahumano)
                     Where Metahumano_Habilidad.Id_Habilidad = ?
-                    Order By Metahumano.Alias;`
+                    Order By Metahumano.Alias`
     return conexion.promise().query(sql, [Id_Habilidad]);
 };
 
 export const createMetahumano_Habilidad = (Metahumano_Habilidad_Data) =>{
-    const sql = 'Insert Into Metahumano_Habilidad (Id_Metahumano, Id_Habilidad) Values (?,?);'
+    const sql = 'Insert Into Metahumano_Habilidad (Id_Metahumano, Id_Habilidad) Values (?,?)'
     const parametros = [
         Metahumano_Habilidad_Data.Id_Metahumano,
         Metahumano_Habilidad_Data.Id_Habilidad
