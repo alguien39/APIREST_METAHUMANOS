@@ -1,0 +1,1021 @@
+openapi: 3.0.0
+info:
+  title: API de Metahumanos
+  description: API REST para gestión de metahumanos, habilidades y debilidades
+  version: 1.0.0
+  contact:
+    name: Joham Barberena
+    email: alguien_bama@hotmail.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo
+  - url: https://ballast.proxy.rlwy.net:54511
+    description: Servidor de producción
+
+tags:
+  - name: Autenticación
+    description: Endpoints para autenticación de usuarios
+  - name: Metahumanos
+    description: Gestión de metahumanos
+  - name: Habilidades
+    description: Gestión de habilidades
+  - name: Debilidades
+    description: Gestión de debilidades
+  - name: Relaciones
+    description: Gestión de relaciones entre entidades
+  - name: Sistema
+    description: Endpoints del sistema
+
+paths:
+  # ========== AUTENTICACIÓN ==========
+  /user/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Autenticar usuario
+      description: Obtiene token JWT para autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - Email
+                - Password
+              properties:
+                Email:
+                  type: string
+                  format: email
+                  example: "admin@metahumanos.com"
+                Password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        '200':
+          description: Autenticación exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  usuario:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      nombre:
+                        type: string
+                      email:
+                        type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ========== METAHUMANOS ==========
+  /metahumano:
+    get:
+      tags:
+        - Metahumanos
+      summary: Obtener todos los metahumanos
+      description: Retorna lista de todos los metahumanos (con cache)
+      responses:
+        '200':
+          description: Lista de metahumanos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Metahumano'
+          headers:
+            X-Cache:
+              schema:
+                type: string
+              description: Indica si la respuesta proviene de cache
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+        - Metahumanos
+      summary: Crear un nuevo metahumano
+      description: Crea un nuevo registro de metahumano (requiere autenticación)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetahumanoInput'
+      responses:
+        '201':
+          description: Metahumano creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /metahumano/{id}:
+    get:
+      tags:
+        - Metahumanos
+      summary: Obtener metahumano por ID
+      description: Retorna un metahumano específico por su ID (con cache)
+      parameters:
+        - $ref: '#/components/parameters/IdMetahumano'
+      responses:
+        '200':
+          description: Metahumano encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metahumano'
+          headers:
+            X-Cache:
+              schema:
+                type: string
+              description: Indica si la respuesta proviene de cache
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Metahumanos
+      summary: Actualizar metahumano
+      description: Actualiza un metahumano existente (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdMetahumano'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetahumanoUpdate'
+      responses:
+        '200':
+          description: Metahumano actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Metahumanos
+      summary: Eliminar metahumano
+      description: Elimina un metahumano por ID (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdMetahumano'
+      responses:
+        '200':
+          description: Metahumano eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ========== HABILIDADES ==========
+  /habilidad:
+    get:
+      tags:
+        - Habilidades
+      summary: Obtener todas las habilidades
+      description: Retorna lista de todas las habilidades
+      responses:
+        '200':
+          description: Lista de habilidades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Habilidad'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+        - Habilidades
+      summary: Crear una nueva habilidad
+      description: Crea un nuevo registro de habilidad (requiere autenticación)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HabilidadInput'
+      responses:
+        '201':
+          description: Habilidad creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /habilidad/{id}:
+    get:
+      tags:
+        - Habilidades
+      summary: Obtener habilidad por ID
+      description: Retorna una habilidad específica por su ID
+      parameters:
+        - $ref: '#/components/parameters/IdHabilidad'
+      responses:
+        '200':
+          description: Habilidad encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habilidad'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Habilidades
+      summary: Actualizar habilidad
+      description: Actualiza una habilidad existente (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdHabilidad'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HabilidadUpdate'
+      responses:
+        '200':
+          description: Habilidad actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Habilidades
+      summary: Eliminar habilidad
+      description: Elimina una habilidad por ID (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdHabilidad'
+      responses:
+        '200':
+          description: Habilidad eliminada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ========== DEBILIDADES ==========
+  /debilidad:
+    get:
+      tags:
+        - Debilidades
+      summary: Obtener todas las debilidades
+      description: Retorna lista de todas las debilidades
+      responses:
+        '200':
+          description: Lista de debilidades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Debilidad'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+        - Debilidades
+      summary: Crear una nueva debilidad
+      description: Crea un nuevo registro de debilidad (requiere autenticación)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebilidadInput'
+      responses:
+        '201':
+          description: Debilidad creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /debilidad/{id}:
+    get:
+      tags:
+        - Debilidades
+      summary: Obtener debilidad por ID
+      description: Retorna una debilidad específica por su ID
+      parameters:
+        - $ref: '#/components/parameters/IdDebilidad'
+      responses:
+        '200':
+          description: Debilidad encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Debilidad'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Debilidades
+      summary: Actualizar debilidad
+      description: Actualiza una debilidad existente (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdDebilidad'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebilidadUpdate'
+      responses:
+        '200':
+          description: Debilidad actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Debilidades
+      summary: Eliminar debilidad
+      description: Elimina una debilidad por ID (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdDebilidad'
+      responses:
+        '200':
+          description: Debilidad eliminada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ========== RELACIONES METAHUMANO-HABILIDAD ==========
+  /metahumano_habilidad:
+    get:
+      tags:
+        - Relaciones
+      summary: Obtener todas las relaciones metahumano-habilidad
+      description: Retorna todas las relaciones entre metahumanos y habilidades (requiere autenticación)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de relaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetahumanoHabilidad'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+        - Relaciones
+      summary: Crear relación metahumano-habilidad
+      description: Crea una nueva relación entre un metahumano y una habilidad (requiere autenticación)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RelacionMetahumanoHabilidad'
+      responses:
+        '201':
+          description: Relación creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /metahumano_habilidad/metahumano/{id}:
+    get:
+      tags:
+        - Relaciones
+      summary: Obtener habilidades de un metahumano
+      description: Retorna todas las habilidades de un metahumano específico (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdMetahumano'
+      responses:
+        '200':
+          description: Lista de habilidades del metahumano
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetahumanoHabilidad'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /metahumano_habilidad/habilidad/{id}:
+    get:
+      tags:
+        - Relaciones
+      summary: Obtener metahumanos con una habilidad
+      description: Retorna todos los metahumanos que tienen una habilidad específica (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdHabilidad'
+      responses:
+        '200':
+          description: Lista de metahumanos con la habilidad
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetahumanoHabilidad'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /metahumano_habilidad/{id_habilidad}/{id_metahumano}:
+    delete:
+      tags:
+        - Relaciones
+      summary: Eliminar relación metahumano-habilidad
+      description: Elimina una relación específica entre un metahumano y una habilidad (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdHabilidadPath'
+        - $ref: '#/components/parameters/IdMetahumanoPath'
+      responses:
+        '200':
+          description: Relación eliminada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ========== RELACIONES METAHUMANO-DEBILIDAD ==========
+  /metahumano_debilidad:
+    get:
+      tags:
+        - Relaciones
+      summary: Obtener todas las relaciones metahumano-debilidad
+      description: Retorna todas las relaciones entre metahumanos y debilidades (requiere autenticación)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de relaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetahumanoDebilidad'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+        - Relaciones
+      summary: Crear relación metahumano-debilidad
+      description: Crea una nueva relación entre un metahumano y una debilidad (requiere autenticación)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RelacionMetahumanoDebilidad'
+      responses:
+        '201':
+          description: Relación creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /metahumano_debilidad/metahumano/{id}:
+    get:
+      tags:
+        - Relaciones
+      summary: Obtener debilidades de un metahumano
+      description: Retorna todas las debilidades de un metahumano específico (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdMetahumano'
+      responses:
+        '200':
+          description: Lista de debilidades del metahumano
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetahumanoDebilidad'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /metahumano_debilidad/debilidad/{id}:
+    get:
+      tags:
+        - Relaciones
+      summary: Obtener metahumanos con una debilidad
+      description: Retorna todos los metahumanos que tienen una debilidad específica (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdDebilidad'
+      responses:
+        '200':
+          description: Lista de metahumanos con la debilidad
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetahumanoDebilidad'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /metahumano_debilidad/{id_debilidad}/{id_metahumano}:
+    delete:
+      tags:
+        - Relaciones
+      summary: Eliminar relación metahumano-debilidad
+      description: Elimina una relación específica entre un metahumano y una debilidad (requiere autenticación)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdDebilidadPath'
+        - $ref: '#/components/parameters/IdMetahumanoPath2'
+      responses:
+        '200':
+          description: Relación eliminada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdMetahumano:
+      name: id
+      in: path
+      description: ID del metahumano
+      required: true
+      schema:
+        type: integer
+        example: 1
+    IdMetahumanoPath:
+      name: id_metahumano
+      in: path
+      description: ID del metahumano
+      required: true
+      schema:
+        type: integer
+        example: 1
+    IdMetahumanoPath2:
+      name: id_metahumano
+      in: path
+      description: ID del metahumano
+      required: true
+      schema:
+        type: integer
+        example: 1
+    IdHabilidad:
+      name: id
+      in: path
+      description: ID de la habilidad
+      required: true
+      schema:
+        type: integer
+        example: 1
+    IdHabilidadPath:
+      name: id_habilidad
+      in: path
+      description: ID de la habilidad
+      required: true
+      schema:
+        type: integer
+        example: 1
+    IdDebilidad:
+      name: id
+      in: path
+      description: ID de la debilidad
+      required: true
+      schema:
+        type: integer
+        example: 1
+    IdDebilidadPath:
+      name: id_debilidad
+      in: path
+      description: ID de la debilidad
+      required: true
+      schema:
+        type: integer
+        example: 1
+
+  responses:
+    BadRequest:
+      description: Error de validación
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: No autorizado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    # Esquema base
+    SuccessMessage:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: "Operación exitosa"
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Error de validación"
+        details:
+          type: array
+          items:
+            type: object
+          nullable: true
+        stack:
+          type: string
+          nullable: true
+
+    # Esquemas principales
+    Metahumano:
+      type: object
+      properties:
+        Id_MetaHumano:
+          type: integer
+          example: 1
+        Nombre_Metahumano:
+          type: string
+          example: "Clark Kent"
+        Alias:
+          type: string
+          example: "Superman"
+        Tipo:
+          type: string
+          example: "Superhéroe"
+        Actividad:
+          type: string
+          example: "Activo"
+        Ultimo_Avistamiento:
+          type: string
+          format: date-time
+          nullable: true
+
+    MetahumanoInput:
+      type: object
+      required:
+        - Id_MetaHumano
+        - Nombre_Metahumano
+        - Alias
+        - Tipo
+        - Actividad
+      properties:
+        Id_MetaHumano:
+          type: integer
+          example: 1
+        Nombre_Metahumano:
+          type: string
+          example: "Clark Kent"
+        Alias:
+          type: string
+          example: "Superman"
+        Tipo:
+          type: string
+          example: "Superhéroe"
+        Actividad:
+          type: string
+          example: "Activo"
+        Ultimo_Avistamiento:
+          type: string
+          format: date-time
+          nullable: true
+
+    MetahumanoUpdate:
+      type: object
+      properties:
+        Nombre_Metahumano:
+          type: string
+          example: "Clark Kent"
+        Alias:
+          type: string
+          example: "Superman"
+        Tipo:
+          type: string
+          example: "Superhéroe"
+        Actividad:
+          type: string
+          example: "Activo"
+        Ultimo_Avistamiento:
+          type: string
+          format: date-time
+          nullable: true
+
+    Habilidad:
+      type: object
+      properties:
+        Id_Habilidad:
+          type: integer
+          example: 1
+        Nombre_Habilidad:
+          type: string
+          example: "Vuelo"
+        Descripcion_Habilidad:
+          type: string
+          example: "Capacidad de volar a grandes velocidades"
+          nullable: true
+
+    HabilidadInput:
+      type: object
+      required:
+        - Id_Habilidad
+        - Nombre_Habilidad
+      properties:
+        Id_Habilidad:
+          type: integer
+          example: 1
+        Nombre_Habilidad:
+          type: string
+          example: "Vuelo"
+        Descripcion_Habilidad:
+          type: string
+          example: "Capacidad de volar a grandes velocidades"
+          nullable: true
+
+    HabilidadUpdate:
+      type: object
+      properties:
+        Nombre_Habilidad:
+          type: string
+          example: "Vuelo"
+        Descripcion_Habilidad:
+          type: string
+          example: "Capacidad de volar a grandes velocidades"
+          nullable: true
+
+    Debilidad:
+      type: object
+      properties:
+        Id_Debilidad:
+          type: integer
+          example: 1
+        Nombre_Debilidad:
+          type: string
+          example: "Kryptonita"
+        Descripcion_Debilidad:
+          type: string
+          example: "Mineral que debilita a los kryptonianos"
+          nullable: true
+
+    DebilidadInput:
+      type: object
+      required:
+        - Id_Debilidad
+        - Nombre_Debilidad
+      properties:
+        Id_Debilidad:
+          type: integer
+          example: 1
+        Nombre_Debilidad:
+          type: string
+          example: "Kryptonita"
+        Descripcion_Debilidad:
+          type: string
+          example: "Mineral que debilita a los kryptonianos"
+          nullable: true
+
+    DebilidadUpdate:
+      type: object
+      properties:
+        Nombre_Debilidad:
+          type: string
+          example: "Kryptonita"
+        Descripcion_Debilidad:
+          type: string
+          example: "Mineral que debilita a los kryptonianos"
+          nullable: true
+
+    # Esquemas de relaciones
+    MetahumanoHabilidad:
+      type: object
+      properties:
+        Id_Metahumano:
+          type: integer
+          example: 1
+        Alias:
+          type: string
+          example: "Superman"
+        Id_Habilidad:
+          type: integer
+          example: 1
+        Nombre_Habilidad:
+          type: string
+          example: "Vuelo"
+
+    RelacionMetahumanoHabilidad:
+      type: object
+      required:
+        - Id_Metahumano
+        - Id_Habilidad
+      properties:
+        Id_Metahumano:
+          type: integer
+          example: 1
+        Id_Habilidad:
+          type: integer
+          example: 1
+
+    MetahumanoDebilidad:
+      type: object
+      properties:
+        Id_Metahumano:
+          type: integer
+          example: 1
+        Alias:
+          type: string
+          example: "Superman"
+        Id_Debilidad:
+          type: integer
+          example: 1
+        Nombre_Debilidad:
+          type: string
+          example: "Kryptonita"
+
+    RelacionMetahumanoDebilidad:
+      type: object
+      required:
+        - Id_Metahumano
+        - Id_Debilidad
+      properties:
+        Id_Metahumano:
+          type: integer
+          example: 1
+        Id_Debilidad:
+          type: integer
+          example: 1
+
+  # Ejemplos de solicitudes
+  requestBodies:
+    LoginRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Email:
+                type: string
+                example: "admin@metahumanos.com"
+              Password:
+                type: string
+                example: "password123"

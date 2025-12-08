@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
 
+import { specs } from './utils/swagger.js';
 import {router_metahumano} from './rutas/router_metahumano.js';
 import {router_Habilidad} from './rutas/router_habilidad.js';
 import {router_debilidad} from './rutas/router_debilidad.js';
@@ -18,6 +20,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//Documentacion
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 //End Points
 app.use('/user', router_auth);
 app.use('/metahumano', router_metahumano);
@@ -27,7 +32,7 @@ app.use('/debilidad', router_debilidad);
 app.use('/metahumano_debilidad', router_metahumano_debilidad);
 
 //Enb point para rutas inexistentes
-app.use('*', (req, res) => {
+app.use((req, res) => {
     res.status(404).json({ 
         error: 'Ruta no encontrada',
         path: req.originalUrl 

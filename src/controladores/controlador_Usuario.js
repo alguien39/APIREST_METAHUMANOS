@@ -1,8 +1,6 @@
-import bcrypt from 'bcryptjs';
 import {generarToken} from '../utils/jwt.js';
 import {loginUsuario, crearUsuario} from '../modelos/modelo_usuario.js';
 import {AppError} from '../utils/AppError.js';
-import { response } from "express";
 
 export const login = async (req, res, next) => {
     try {

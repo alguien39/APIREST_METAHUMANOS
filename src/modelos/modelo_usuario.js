@@ -14,10 +14,14 @@ export const crearUsuario = (usuarioData) => {
                 throw new Error('Una Cuenta con este Email ya existe');
             }
             
-            const sql = 'INSERT INTO usuario (Email, Password) VALUES (?, ?, ?)';
+            let Rol = "Usuario"
+
+            const sql = 'INSERT INTO Usuario (Id_Usuario, Email, Password, Rol) VALUES (?, ?, ?, ?)';
             const parametros = [
+                usuarioData.Id_Usuario,
                 usuarioData.Email,
-                usuarioData.Password
+                usuarioData.Password,
+                Rol || "Usuario"
             ];
             return conexion.promise().query(sql, parametros);
         });
