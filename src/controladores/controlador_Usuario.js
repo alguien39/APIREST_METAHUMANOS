@@ -13,13 +13,13 @@ export const login = async (req, res, next) => {
         }
 
         const usuario = rows[0];
-        const valido = await bcrypt.compare(Password, usuario.Contrasena);
+        const valido = Password == usuario.Password;
 
         if (!valido) {
             throw new AppError('Credenciales inválidas', 401);
         }
 
-        const token = generarToken({id: usuario.Id_Usuario, nombre: usuario.Nombre_Usuario});
+        const token = generarToken({id: usuario.Id_Usuario, Email: usuario.Email});
         res.json({token});
         
     } catch (error) {

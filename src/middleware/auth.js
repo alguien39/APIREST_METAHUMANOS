@@ -2,15 +2,18 @@ import { verificarToken } from "../utils/jwt.js";
 import {AppError} from "../utils/AppError.js";
 
 export const auth = (req, res, next) =>{
-    const token = req.headers.authorization?.split('')[1];
-    if(!token){
+    const authHeader = req.headers.authorization || req.headers['Authorization'];
+    if (!authHeader) {
         return next(new AppError('No se ha provisionado ningun token', 401));
     }
-    try{
+
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+
+    try {
         const decoded = verificarToken(token);
         req.user = decoded;
         next();
-    } catch (error){
-        return next (new AppError ('Token invalido', 401));
+    } catch (error) {
+        return next(new AppError('Token invalido', 401));
     }
 };

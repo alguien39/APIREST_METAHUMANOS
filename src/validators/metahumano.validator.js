@@ -61,7 +61,7 @@ export const validarUpdateMetahumano = [
     .optional()
     .isDate()
     .withMessage("La fecha de ultimo avistamiento debe ser una fecha valida"),
-    param('Id_MetaHumano')
+    param('id')
     .isLength({min:6,max:6})
     .withMessage("El ID del metahumano debe tener exactamente 6 caracteres")
     .isAlphanumeric()

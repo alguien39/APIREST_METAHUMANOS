@@ -41,7 +41,7 @@ export const createMetahumano = async (req, res, next)=>{
 export const actualizarMetahumano = async (req, res, next) =>{
     try{
         const { id } = req.params;
-        await modelo.updateMetaHumano(id, req.body);
+        await modelo.updateMetahumano(id, req.body);
         res.status(200).json({ message: "MetaHumano actualizado correctamente" });
     }
     catch(error){
