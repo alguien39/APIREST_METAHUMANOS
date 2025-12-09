@@ -19,7 +19,7 @@ export const validarCrearHabilidad = [
     .withMessage("El nombre de la habilidad es obligatorio")
     .isLength({max:20})
     .withMessage("El nombre de la habilidad debe tener como maxico 20 caracteres"),
-    body("Descripcion_habilidad")
+    body("Descripcion_Habilidad")
     .notEmpty()
     .withMessage("La descripcion es obligatoria")
     .isLength({max:256})
@@ -37,7 +37,7 @@ export const validarUpdateHabilidad = [
     .withMessage("El nombre de la habilidad es obligatorio")
     .isLength({max:20})
     .withMessage("El nombre de la habilidad debe tener como maxico 20 caracteres"),
-    body("Descripcion_habilidad")
+    body("Descripcion_Habilidad")
     .notEmpty()
     .withMessage("La descripcion es obligatoria")
     .isLength({max:256})
