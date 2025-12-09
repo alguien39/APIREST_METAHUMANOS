@@ -27,6 +27,11 @@ export const validarCrearDebilidad = [
 ];
 
 export const validarUpdateDebilidad = [
+    param("id")
+    .isLength({min:6,max:6})
+    .withMessage("El ID de la debilidad debe tener exactamente 6 caracteres")
+    .isAlphanumeric()
+    .withMessage("El ID dela debilidad debe ser alfanumérico"),
     body("Id_Debilidad")
     .isLength({min:6,max:6})
     .withMessage("El Id de la debilidad debe tener exactamente 6 caracteres")

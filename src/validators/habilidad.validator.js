@@ -27,6 +27,11 @@ export const validarCrearHabilidad = [
 ];
 
 export const validarUpdateHabilidad = [
+    param("id")
+    .isLength({min:6,max:6})
+    .withMessage("El Id de la habilidad debe tener exactamente 6 caracteres")
+    .isAlphanumeric()
+    .withMessage("El Id de la habilidad debe ser alfa-numerico"),
     param("Id_Habilidad")
     .isLength({min:6,max:6})
     .withMessage("El Id de la habilidad debe tener exactamente 6 caracteres")
