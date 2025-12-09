@@ -40,19 +40,6 @@ export const updateHabilidad = (Id_Habilidad, HabilidadData) =>{
 };
 
 export const deleteHabilidad = (Id_Habilidad) => {
-    const checkRelations = `
-        SELECT COUNT(*) as count 
-        FROM Metahumano_Habilidad 
-        WHERE Id_Habilidad = ?
-    `;
-    
-    return conexion.promise().query(checkRelations, [Id_Habilidad])
-        .then(([rows]) => {
-            if (rows[0].count > 0) {
-                throw new Error('No se puede eliminar la habilidad porque tiene metahumanos asociados');
-            }
-            
-            const sql = 'DELETE FROM Habilidad WHERE Id_Habilidad = ?';
-            return conexion.promise().query(sql, [Id_Habilidad]);
-        });
+    const sql = 'DELETE FROM Habilidad WHERE Id_Habilidad = ?';
+    return conexion.promise().query(sql, [Id_Habilidad]);
 }

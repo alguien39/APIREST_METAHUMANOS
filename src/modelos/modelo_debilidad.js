@@ -40,19 +40,6 @@ export const updateDebilidad = (Id_Debilidad, DebilidadData) =>{
 };
 
 export const deleteDebilidad = (Id_Debilidad) => {
-    const checkRelations = `
-        SELECT COUNT(*) as count 
-        FROM Metahumano_Debilidad 
-        WHERE Id_Debilidad = ?
-    `;
-    
-    return conexion.promise().query(checkRelations, [Id_Debilidad])
-        .then(([rows]) => {
-            if (rows[0].count > 0) {
-                throw new Error('No se puede eliminar la debilidad porque tiene metahumanos asociados');
-            }
-            
-            const sql = 'DELETE FROM Debilidad WHERE Id_Debilidad = ?';
-            return conexion.promise().query(sql, [Id_Debilidad]);
-        });
+    const sql = 'DELETE FROM Debilidad WHERE Id_Debilidad = ?';
+    return conexion.promise().query(sql, [Id_Debilidad]);
 }
