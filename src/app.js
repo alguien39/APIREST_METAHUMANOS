@@ -4,7 +4,6 @@ import { fileURLToPath } from "url";
 import cors from 'cors';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
-import helmet from 'helmet';
 import { specs } from './utils/swagger.js';
 import {router_metahumano} from './rutas/router_metahumano.js';
 import {router_Habilidad} from './rutas/router_habilidad.js';
@@ -21,25 +20,9 @@ dotenv.config();
 
 const app = express();
 
-// Configuración para producción
-const isProduction = process.env.NODE_ENV === 'production';
-
-// Configuración de CORS
-const corsOptions = {
-  origin: isProduction 
-    ? process.env.CORS_ORIGIN || '*' 
-    : '*',
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-
 app.use(cors(corsOptions));
-
-// Seguridad con Helmet
-app.use(helmet({
-  contentSecurityPolicy: isProduction,
-  crossOriginEmbedderPolicy: isProduction,
-}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Documentación
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
