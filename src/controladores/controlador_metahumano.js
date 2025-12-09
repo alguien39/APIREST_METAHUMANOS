@@ -52,7 +52,7 @@ export const actualizarMetahumano = async (req, res, next) =>{
 export const eliminarMetaHumanoController = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const resultado = await modelo.deleteMetaHumano(id);
+        const resultado = await modelo.deleteMetahumano(id);
         if (resultado.affectedRows === 0) {
             throw new AppError(`Metahumano con id ${id} no encontrado`, 404);
         }
