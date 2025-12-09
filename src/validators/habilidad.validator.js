@@ -32,12 +32,12 @@ export const validarUpdateHabilidad = [
     .withMessage("El Id de la habilidad debe tener exactamente 6 caracteres")
     .isAlphanumeric()
     .withMessage("El Id de la habilidad debe ser alfa-numerico"),
-    param("Id_Habilidad")
+    body("Id_Habilidad")
     .isLength({min:6,max:6})
     .withMessage("El Id de la habilidad debe tener exactamente 6 caracteres")
     .isAlphanumeric()
     .withMessage("El Id de la habilidad debe ser alfa-numerico"),
-    body("Nombre_habilidad")
+    body("Nombre_Habilidad")
     .notEmpty()
     .withMessage("El nombre de la habilidad es obligatorio")
     .isLength({max:20})
