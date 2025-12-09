@@ -40,9 +40,7 @@ export const validarUpdateMetahumano = [
     body("Nombre_Metahumano")
     .optional()
     .isLength({max:20})
-    .withMessage("El nombre del metahumano debe tener entre 3 y 20 caracteres")
-    .isAlpha()
-    .withMessage("El nombre del metahumano solo debe contener letras"),
+    .withMessage("El nombre del metahumano debe tener entre 3 y 20 caracteres"),
     body("Alias")
     .notEmpty()
     .withMessage("El alias del metahumano es obligatorio")

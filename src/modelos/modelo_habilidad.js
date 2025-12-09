@@ -40,6 +40,6 @@ export const updateHabilidad = (Id_Habilidad, HabilidadData) =>{
 };
 
 export const deleteHabilidad = (Id_Habilidad) => {
-    const sql = 'DELETE FROM Habilidad WHERE Id_Habilidad = ?';
+    const sql = 'DELETE FROM habilidad WHERE Id_Habilidad = ?';
     return conexion.promise().query(sql, [Id_Habilidad]);
 }
