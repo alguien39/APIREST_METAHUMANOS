@@ -35,8 +35,8 @@ export const createMetahumano_Habilidad = (Metahumano_Habilidad_Data) =>{
 export const deleteMetahumano_Habilidad = (Id_Habilidad, Id_Metahumano) => {
     const sql = 'Delete From metahumano_habilidad Where Id_Metahumano = ? AND Id_Habilidad = ?'
     const parametros = [
-        Id_Habilidad,
-        Id_Metahumano
+        Id_Metahumano,
+        Id_Habilidad
     ];
     return conexion.promise().query(sql,parametros);
 };

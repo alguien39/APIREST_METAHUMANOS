@@ -51,7 +51,7 @@ export const createMetahumano_Habilidad= async (req,res,next)=>{
 
 export const eliminarMetahumano_Habilidad = async (req,res,next)=>{
     try {
-        const {id_metahumano, id_habilidad} = req.params;
+        const {id_habilidad, id_metahumano} = req.params;
         const [result] = await modelo.deleteMetahumano_Habilidad(id_habilidad, id_metahumano);
         if (!result || result.affectedRows === 0) {
             throw new AppError(`Relación no encontrada para metahumano=${id_metahumano} y habilidad=${id_habilidad}`, 404);
