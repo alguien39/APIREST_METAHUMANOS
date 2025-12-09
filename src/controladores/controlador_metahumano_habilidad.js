@@ -51,7 +51,7 @@ export const createMetahumano_Habilidad= async (req,res,next)=>{
 
 export const eliminarMetahumano_Habilidad = async (req,res,next)=>{
     try {
-        const {id_Metahumano, Id_Habilidad} = req.params;
+        const {id_metahumano, id_habilidad} = req.params;
         await modelo.deleteMetahumano_Habilidad(id_habilidad, id_metahumano);
         res.status(200).json({message:"Habilidad eliminada del metahumano exitosamente"});
     } catch (error) {
