@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Documentación API - MetaHumanos (Debug)</title>
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <style>body,html,#redoc-container{height:100%;margin:0;padding:0}</style>
+  </head>
+  <body>
+    <div id="redoc-container"></div>
+    <script>
+      (async () => {
+        try {
+          const res = await fetch('/Docs/OpenApi.yml');
+          if (!res.ok) throw new Error('Fetch failed: ' + res.status + ' ' + res.statusText);
+          const text = await res.text();
+          console.log('OpenApi.yml first 1024 chars:\\n', text.slice(0,1024));
+          // parse YAML -> JS object
+          const spec = jsyaml.load(text);
+          console.log('Parsed spec OK:', spec.info && spec.info.title);
+          // init Redoc with parsed object (gives clearer errors)
+          await Redoc.init(spec, undefined, document.getElementById('redoc-container'));
+        } catch (err) {
+          console.error('Error loading/initializing Redoc:', err);
+          document.body.innerHTML = '<pre style="white-space:pre-wrap;color:#900">Error cargando documentación:\\n' + String(err) + '</pre>';
+        }
+      })();
+    </script>
+  </body>
+</html>

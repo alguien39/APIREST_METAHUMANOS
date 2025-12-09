@@ -27,8 +27,6 @@ tags:
     description: Gestión de debilidades
   - name: Relaciones
     description: Gestión de relaciones entre entidades
-  - name: Sistema
-    description: Endpoints del sistema
 
 paths:
   # ========== AUTENTICACIÓN ==========
@@ -80,50 +78,118 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/user/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                Email: "admin@metahumanos.com",
+                Password: "password123"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            payload = {
+              "Email": "admin@metahumanos.com",
+              "Password": "password123"
+            }
+            print(requests.post("http://localhost:3000/user/login", json=payload).json())
+        - lang: Bash
+          source: |
+            curl -X POST http://localhost:3000/user/login \
+            -H "Content-Type: application/json" \
+            -d '{"Email":"admin@metahumanos.com","Password":"password123"}'
+        - lang: PowerShell
+          source: |
+            $body = @{
+              Email="admin@metahumanos.com"
+              Password="password123"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/user/login" -Method POST -Body $body -ContentType "application/json"
 
-    /user/register:
-      post:
-        tags:
-          - Autenticación
-        summary: Registrar nuevo usuario
-        description: Crea un nuevo usuario en el sistema
-        requestBody:
-          required: true
+  /user/register:
+    post:
+      tags:
+        - Autenticación
+      summary: Registrar nuevo usuario
+      description: Crea un nuevo usuario en el sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - Id_Usuario
+                - Email
+                - Password
+                - Rol
+              properties:
+                Id_Usuario:
+                  type: string
+                  example: "Us0001"
+                Email:
+                  type: string
+                  format: email
+                  example: "alguien@ejemplo.com"
+                Password:
+                  type: string
+                  format: password
+                  example: "password123"
+                Rol:
+                  type: string
+                  example: "admin"
+      responses:
+        '201':
+          description: Usuario creado exitosamente
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - Id_Usuario
-                  - Email
-                  - Password
-                  - Rol
-                properties:
-                  Nombre:
-                    type: Id_Usuario
-                    example: "Us0001"
-                  Email:
-                    type: string
-                    format: email
-                    example: "alguien@ejemplo.com"
-                  Password:
-                    type: string
-                    format: password
-                    example: "password123"
-                  Rol:
-                    type: string
-                    example: "admin"
-        responses:
-          '201':
-            description: Usuario creado exitosamente
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/SuccessMessage'
-          '400':
-            $ref: '#/components/responses/BadRequest'
-          '401':
-            $ref: '#/components/responses/Unauthorized'
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/user/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                Id_Usuario: "Us0001",
+                Email: "alguien@ejemplo.com",
+                Password: "password123",
+                Rol: "admin"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            payload = {
+              "Id_Usuario": "Us0001",
+              "Email": "alguien@ejemplo.com",
+              "Password": "password123",
+              "Rol": "admin"
+            }
+            print(requests.post("http://localhost:3000/user/register", json=payload).json())
+        - lang: Bash
+          source: |
+            curl -X POST http://localhost:3000/user/register \
+            -H "Content-Type: application/json" \
+            -d '{"Id_Usuario":"Us0001","Email":"alguien@ejemplo.com","Password":"password123","Rol":"admin"}'
+        - lang: PowerShell
+          source: |
+            $body = @{
+              Id_Usuario="Us0001"
+              Email="alguien@ejemplo.com"
+              Password="password123"
+              Rol="admin"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/user/register" -Method POST -Body $body -ContentType "application/json"
 
   # ========== METAHUMANOS ==========
   /metahumano:
@@ -148,6 +214,23 @@ paths:
               description: Indica si la respuesta proviene de cache
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano")
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            print(requests.get("http://localhost:3000/metahumano").json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/metahumano
+        - lang: PowerShell
+          source: |
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano" -Method GET
+
     post:
       tags:
         - Metahumanos
@@ -172,6 +255,52 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano", {
+              method: "POST",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+              },
+              body: JSON.stringify({
+                Id_MetaHumano: "MH0006",
+                Nombre_Metahumano: "Nuevo",
+                Alias: "Example",
+                Tipo: "Heroe",
+                Actividad: "Activo"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            payload = {
+              "Id_MetaHumano": "MH0006",
+              "Nombre_Metahumano": "Nuevo",
+              "Alias": "Example",
+              "Tipo": "Heroe",
+              "Actividad": "Activo"
+            }
+            print(requests.post("http://localhost:3000/metahumano", json=payload, headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X POST http://localhost:3000/metahumano \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer tu_token_jwt_aqui" \
+            -d '{"Id_MetaHumano":"MH0006","Nombre_Metahumano":"Nuevo","Alias":"Example","Tipo":"Heroe","Actividad":"Activo"}'
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $body = @{
+              Id_MetaHumano="MH0006"
+              Nombre_Metahumano="Nuevo"
+              Alias="Example"
+              Tipo="Heroe"
+              Actividad="Activo"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano" -Method POST -Body $body -ContentType "application/json" -Headers $headers
 
   /metahumano/{id}:
     get:
@@ -197,6 +326,22 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano/MH0001")
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            print(requests.get("http://localhost:3000/metahumano/MH0001").json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/metahumano/MH0001
+        - lang: PowerShell
+          source: |
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano/MH0001" -Method GET
     put:
       tags:
         - Metahumanos
@@ -225,6 +370,34 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano/MH0001", {
+              method: "PUT",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+              },
+              body: JSON.stringify({ Nombre_Metahumano: "Actualizado" })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            payload = { "Nombre_Metahumano": "Actualizado" }
+            print(requests.put("http://localhost:3000/metahumano/MH0001", json=payload, headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X PUT http://localhost:3000/metahumano/MH0001 \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer tu_token_jwt_aqui" \
+            -d '{"Nombre_Metahumano":"Actualizado"}'
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $body = @{ Nombre_Metahumano="Actualizado" } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano/MH0001" -Method PUT -Body $body -ContentType "application/json" -Headers $headers
     delete:
       tags:
         - Metahumanos
@@ -247,6 +420,28 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano/MH0001", { 
+              method: "DELETE",
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.delete("http://localhost:3000/metahumano/MH0001", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X DELETE http://localhost:3000/metahumano/MH0001 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano/MH0001" -Method DELETE -Headers $headers
 
   # ========== HABILIDADES ==========
   /habilidad:
@@ -266,6 +461,22 @@ paths:
                   $ref: '#/components/schemas/Habilidad'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/habilidad")
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            print(requests.get("http://localhost:3000/habilidad").json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/habilidad
+        - lang: PowerShell
+          source: |
+            Invoke-RestMethod -Uri "http://localhost:3000/habilidad" -Method GET
     post:
       tags:
         - Habilidades
@@ -290,6 +501,43 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/habilidad", {
+              method: "POST",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+              },
+              body: JSON.stringify({
+                Id_Habilidad: "Hb0007",
+                Nombre_Habilidad: "Telepatía"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            payload = {
+              "Id_Habilidad": "Hb0007",
+              "Nombre_Habilidad": "Telepatía"
+            }
+            print(requests.post("http://localhost:3000/habilidad", json=payload, headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X POST http://localhost:3000/habilidad \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer tu_token_jwt_aqui" \
+            -d '{"Id_Habilidad":"Hb0007","Nombre_Habilidad":"Telepatía"}'
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $body = @{
+              Id_Habilidad="Hb0007"
+              Nombre_Habilidad="Telepatía"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/habilidad" -Method POST -Body $body -ContentType "application/json" -Headers $headers
 
   /habilidad/{id}:
     get:
@@ -310,6 +558,22 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/habilidad/Hb0005")
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            print(requests.get("http://localhost:3000/habilidad/Hb0005").json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/habilidad/Hb0005
+        - lang: PowerShell
+          source: |
+            Invoke-RestMethod -Uri "http://localhost:3000/habilidad/Hb0005" -Method GET
     put:
       tags:
         - Habilidades
@@ -338,6 +602,43 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/habilidad/Hb0005", {
+              method: "PUT",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+              },
+              body: JSON.stringify({ 
+                Nombre_Habilidad: "Vuelo Supersónico",
+                Descripcion_Habilidad: "Vuela a velocidades supersónicas"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            payload = { 
+              "Nombre_Habilidad": "Vuelo Supersónico",
+              "Descripcion_Habilidad": "Vuela a velocidades supersónicas"
+            }
+            print(requests.put("http://localhost:3000/habilidad/Hb0005", json=payload, headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X PUT http://localhost:3000/habilidad/Hb0005 \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer tu_token_jwt_aqui" \
+            -d '{"Nombre_Habilidad":"Vuelo Supersónico","Descripcion_Habilidad":"Vuela a velocidades supersónicas"}'
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $body = @{ 
+              Nombre_Habilidad="Vuelo Supersónico"
+              Descripcion_Habilidad="Vuela a velocidades supersónicas"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/habilidad/Hb0005" -Method PUT -Body $body -ContentType "application/json" -Headers $headers
     delete:
       tags:
         - Habilidades
@@ -360,6 +661,28 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/habilidad/Hb0005", { 
+              method: "DELETE",
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.delete("http://localhost:3000/habilidad/Hb0005", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X DELETE http://localhost:3000/habilidad/Hb0005 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/habilidad/Hb0005" -Method DELETE -Headers $headers
 
   # ========== DEBILIDADES ==========
   /debilidad:
@@ -379,6 +702,22 @@ paths:
                   $ref: '#/components/schemas/Debilidad'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/debilidad")
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            print(requests.get("http://localhost:3000/debilidad").json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/debilidad
+        - lang: PowerShell
+          source: |
+            Invoke-RestMethod -Uri "http://localhost:3000/debilidad" -Method GET
     post:
       tags:
         - Debilidades
@@ -403,6 +742,43 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/debilidad", {
+              method: "POST",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+              },
+              body: JSON.stringify({
+                Id_Debilidad: "Db0007",
+                Nombre_Debilidad: "Magia"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            payload = {
+              "Id_Debilidad": "Db0007",
+              "Nombre_Debilidad": "Magia"
+            }
+            print(requests.post("http://localhost:3000/debilidad", json=payload, headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X POST http://localhost:3000/debilidad \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer tu_token_jwt_aqui" \
+            -d '{"Id_Debilidad":"Db0007","Nombre_Debilidad":"Magia"}'
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $body = @{
+              Id_Debilidad="Db0007"
+              Nombre_Debilidad="Magia"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/debilidad" -Method POST -Body $body -ContentType "application/json" -Headers $headers
 
   /debilidad/{id}:
     get:
@@ -423,6 +799,22 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/debilidad/Db0005")
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            print(requests.get("http://localhost:3000/debilidad/Db0005").json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/debilidad/Db0005
+        - lang: PowerShell
+          source: |
+            Invoke-RestMethod -Uri "http://localhost:3000/debilidad/Db0005" -Method GET
     put:
       tags:
         - Debilidades
@@ -451,6 +843,43 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/debilidad/Db0005", {
+              method: "PUT",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+              },
+              body: JSON.stringify({ 
+                Nombre_Debilidad: "Kryptonita Roja",
+                Descripcion_Debilidad: "Variante roja que causa efectos diferentes"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            payload = { 
+              "Nombre_Debilidad": "Kryptonita Roja",
+              "Descripcion_Debilidad": "Variante roja que causa efectos diferentes"
+            }
+            print(requests.put("http://localhost:3000/debilidad/Db0005", json=payload, headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X PUT http://localhost:3000/debilidad/Db0005 \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer tu_token_jwt_aqui" \
+            -d '{"Nombre_Debilidad":"Kryptonita Roja","Descripcion_Debilidad":"Variante roja que causa efectos diferentes"}'
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $body = @{ 
+              Nombre_Debilidad="Kryptonita Roja"
+              Descripcion_Debilidad="Variante roja que causa efectos diferentes"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/debilidad/Db0005" -Method PUT -Body $body -ContentType "application/json" -Headers $headers
     delete:
       tags:
         - Debilidades
@@ -473,6 +902,28 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/debilidad/Db0005", { 
+              method: "DELETE",
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.delete("http://localhost:3000/debilidad/Db0005", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X DELETE http://localhost:3000/debilidad/Db0005 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/debilidad/Db0005" -Method DELETE -Headers $headers
 
   # ========== RELACIONES METAHUMANO-HABILIDAD ==========
   /metahumano_habilidad:
@@ -496,6 +947,27 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_habilidad", {
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.get("http://localhost:3000/metahumano_habilidad", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/metahumano_habilidad \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad" -Method GET -Headers $headers
     post:
       tags:
         - Relaciones
@@ -520,6 +992,43 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_habilidad", {
+              method: "POST",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+              },
+              body: JSON.stringify({
+                Id_Metahumano: "Mh0012",
+                Id_Habilidad: "Hb0005"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            payload = {
+              "Id_Metahumano": "Mh0012",
+              "Id_Habilidad": "Hb0005"
+            }
+            print(requests.post("http://localhost:3000/metahumano_habilidad", json=payload, headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X POST http://localhost:3000/metahumano_habilidad \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer tu_token_jwt_aqui" \
+            -d '{"Id_Metahumano":"Mh0012","Id_Habilidad":"Hb0005"}'
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $body = @{
+              Id_Metahumano="Mh0012"
+              Id_Habilidad="Hb0005"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad" -Method POST -Body $body -ContentType "application/json" -Headers $headers
 
   /metahumano_habilidad/metahumano/{id}:
     get:
@@ -544,6 +1053,27 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_habilidad/metahumano/Mh0012", {
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.get("http://localhost:3000/metahumano_habilidad/metahumano/Mh0012", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/metahumano_habilidad/metahumano/Mh0012 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad/metahumano/Mh0012" -Method GET -Headers $headers
 
   /metahumano_habilidad/habilidad/{id}:
     get:
@@ -568,6 +1098,27 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_habilidad/habilidad/Hb0005", {
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.get("http://localhost:3000/metahumano_habilidad/habilidad/Hb0005", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/metahumano_habilidad/habilidad/Hb0005 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad/habilidad/Hb0005" -Method GET -Headers $headers
 
   /metahumano_habilidad/{id_habilidad}/{id_metahumano}:
     delete:
@@ -593,6 +1144,28 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_habilidad/Hb0005/Mh0012", {
+              method: "DELETE",
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.delete("http://localhost:3000/metahumano_habilidad/Hb0005/Mh0012", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X DELETE http://localhost:3000/metahumano_habilidad/Hb0005/Mh0012 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad/Hb0005/Mh0012" -Method DELETE -Headers $headers
 
   # ========== RELACIONES METAHUMANO-DEBILIDAD ==========
   /metahumano_debilidad:
@@ -616,6 +1189,27 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_debilidad", {
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.get("http://localhost:3000/metahumano_debilidad", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/metahumano_debilidad \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad" -Method GET -Headers $headers
     post:
       tags:
         - Relaciones
@@ -640,6 +1234,43 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_debilidad", {
+              method: "POST",
+              headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+              },
+              body: JSON.stringify({
+                Id_Metahumano: "Mh0012",
+                Id_Debilidad: "Db0005"
+              })
+            }).then(r => r.json()).then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            payload = {
+              "Id_Metahumano": "Mh0012",
+              "Id_Debilidad": "Db0005"
+            }
+            print(requests.post("http://localhost:3000/metahumano_debilidad", json=payload, headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X POST http://localhost:3000/metahumano_debilidad \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer tu_token_jwt_aqui" \
+            -d '{"Id_Metahumano":"Mh0012","Id_Debilidad":"Db0005"}'
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $body = @{
+              Id_Metahumano="Mh0012"
+              Id_Debilidad="Db0005"
+            } | ConvertTo-Json
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad" -Method POST -Body $body -ContentType "application/json" -Headers $headers
 
   /metahumano_debilidad/metahumano/{id}:
     get:
@@ -664,6 +1295,27 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_debilidad/metahumano/Mh0012", {
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.get("http://localhost:3000/metahumano_debilidad/metahumano/Mh0012", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/metahumano_debilidad/metahumano/Mh0012 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad/metahumano/Mh0012" -Method GET -Headers $headers
 
   /metahumano_debilidad/debilidad/{id}:
     get:
@@ -688,6 +1340,27 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_debilidad/debilidad/Db0005", {
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.get("http://localhost:3000/metahumano_debilidad/debilidad/Db0005", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X GET http://localhost:3000/metahumano_debilidad/debilidad/Db0005 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad/debilidad/Db0005" -Method GET -Headers $headers
 
   /metahumano_debilidad/{id_debilidad}/{id_metahumano}:
     delete:
@@ -713,6 +1386,28 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+      x-code-samples:
+        - lang: JavaScript
+          source: |
+            fetch("http://localhost:3000/metahumano_debilidad/Db0005/Mh0012", {
+              method: "DELETE",
+              headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
+            })
+              .then(r => r.json())
+              .then(console.log);
+        - lang: Python
+          source: |
+            import requests
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            print(requests.delete("http://localhost:3000/metahumano_debilidad/Db0005/Mh0012", headers=headers).json())
+        - lang: Bash
+          source: |
+            curl -X DELETE http://localhost:3000/metahumano_debilidad/Db0005/Mh0012 \
+            -H "Authorization: Bearer tu_token_jwt_aqui"
+        - lang: PowerShell
+          source: |
+            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad/Db0005/Mh0012" -Method DELETE -Headers $headers
 
 components:
   securitySchemes:
@@ -752,7 +1447,7 @@ components:
       description: ID de la habilidad
       required: true
       schema:
-        type: integer
+        type: string
         example: "Hb0005"
     IdHabilidadPath:
       name: id_habilidad
@@ -1048,18 +1743,3 @@ components:
         Id_Debilidad:
           type: string
           example: "Db0005"
-
-  # Ejemplos de solicitudes
-  requestBodies:
-    LoginRequest:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              Email:
-                type: string
-                example: "admin@metahumanos.com"
-              Password:
-                type: string
-                example: "password123"
