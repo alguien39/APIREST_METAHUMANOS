@@ -18,16 +18,12 @@ export const validarCrearHabilidad = [
     .notEmpty()
     .withMessage("El nombre de la habilidad es obligatorio")
     .isLength({max:20})
-    .withMessage("El nombre de la habilidad debe tener como maxico 20 caracteres")
-    .isAlpha()
-    .withMessage("El nombre de la habilidad solo debe contener letras"),
+    .withMessage("El nombre de la habilidad debe tener como maxico 20 caracteres"),
     body("Descripcion_habilidad")
     .notEmpty()
     .withMessage("La descripcion es obligatoria")
     .isLength({max:256})
-    .withMessage("El numero de caracteres maximo para la descripcion es de 256")
-    .isAlphanumeric()
-    .withMessage("La descripcion de la habilidad debe ser alfa-numerica"),
+    .withMessage("El numero de caracteres maximo para la descripcion es de 256"),
 ];
 
 export const validarUpdateHabilidad = [
@@ -40,14 +36,10 @@ export const validarUpdateHabilidad = [
     .notEmpty()
     .withMessage("El nombre de la habilidad es obligatorio")
     .isLength({max:20})
-    .withMessage("El nombre de la habilidad debe tener como maxico 20 caracteres")
-    .isAlpha()
-    .withMessage("El nombre de la habilidad solo debe contener letras"),
+    .withMessage("El nombre de la habilidad debe tener como maxico 20 caracteres"),
     body("Descripcion_habilidad")
     .notEmpty()
     .withMessage("La descripcion es obligatoria")
     .isLength({max:256})
     .withMessage("El numero de caracteres maximo para la descripcion es de 256")
-    .isAlphanumeric()
-    .withMessage("La descripcion de la habilidad debe ser alfa-numerica"),
 ];
