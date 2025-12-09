@@ -14,7 +14,7 @@ export const validarCrearHabilidad = [
     .withMessage("El Id de la habilidad debe tener exactamente 6 caracteres")
     .isAlphanumeric()
     .withMessage("El Id de la habilidad debe ser alfa-numerico"),
-    body("Nombre_habilidad")
+    body("Nombre_Habilidad")
     .notEmpty()
     .withMessage("El nombre de la habilidad es obligatorio")
     .isLength({max:20})
