@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: API de Metahumanos
-  description: API REST para gestión de metahumanos, habilidades y debilidades. Todas las peticiones POST/PUT usan form-data.
+  description: API REST para gestión de metahumanos, habilidades y debilidades. Todas las peticiones POST/PUT usan application/x-www-form-urlencoded.
   version: 1.0.0
   contact:
     name: Joham Barberena
@@ -35,11 +35,11 @@ paths:
       tags:
         - Autenticación
       summary: Autenticar usuario
-      description: Obtiene token JWT para autenticación usando form-data
+      description: Obtiene token JWT para autenticación usando application/x-www-form-urlencoded
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               type: object
               required:
@@ -81,14 +81,17 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            // Usando Fetch API con FormData
-            const formData = new FormData();
-            formData.append('Email', 'admin@metahumanos.com');
-            formData.append('Password', 'password123');
+            // Usando Fetch API con URLSearchParams
+            const data = new URLSearchParams();
+            data.append('Email', 'admin@metahumanos.com');
+            data.append('Password', 'password123');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/user/login", {
               method: "POST",
-              body: formData
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -126,11 +129,11 @@ paths:
       tags:
         - Autenticación
       summary: Registrar nuevo usuario
-      description: Crea un nuevo usuario en el sistema usando form-data
+      description: Crea un nuevo usuario en el sistema usando application/x-www-form-urlencoded
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               type: object
               required:
@@ -167,15 +170,18 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Id_Usuario', 'Us0001');
-            formData.append('Email', 'alguien@ejemplo.com');
-            formData.append('Password', 'password123');
-            formData.append('Rol', 'admin');
+            const data = new URLSearchParams();
+            data.append('Id_Usuario', 'Us0001');
+            data.append('Email', 'alguien@ejemplo.com');
+            data.append('Password', 'password123');
+            data.append('Rol', 'admin');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/user/register", {
               method: "POST",
-              body: formData
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -257,13 +263,13 @@ paths:
       tags:
         - Metahumanos
       summary: Crear un nuevo metahumano
-      description: Crea un nuevo registro de metahumano usando form-data (requiere autenticación)
+      description: Crea un nuevo registro de metahumano usando application/x-www-form-urlencoded (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/MetahumanoInput'
       responses:
@@ -280,19 +286,20 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Id_MetaHumano', 'MH0006');
-            formData.append('Nombre_Metahumano', 'Nuevo');
-            formData.append('Alias', 'Example');
-            formData.append('Tipo', 'Heroe');
-            formData.append('Actividad', 'Activo');
+            const data = new URLSearchParams();
+            data.append('Id_MetaHumano', 'MH0006');
+            data.append('Nombre_Metahumano', 'Nuevo');
+            data.append('Alias', 'Example');
+            data.append('Tipo', 'Heroe');
+            data.append('Actividad', 'Activo');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/metahumano", {
               method: "POST",
               headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: formData
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -306,7 +313,10 @@ paths:
                 "Actividad": "Activo"
             }
             
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+            }
             
             response = requests.post(
                 "https://apirestmetahumanos-production.up.railway.app/metahumano",
@@ -325,7 +335,10 @@ paths:
               Actividad="Activo"
         - lang: PowerShell
           source: |
-            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $headers = @{
+                Authorization = "Bearer tu_token_jwt_aqui"
+                "Content-Type" = "application/x-www-form-urlencoded"
+            }
             $body = @{
                 Id_MetaHumano="MH0006"
                 Nombre_Metahumano="Nuevo"
@@ -337,8 +350,7 @@ paths:
             Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano" `
               -Method POST `
               -Body $body `
-              -Headers $headers `
-              -ContentType "application/x-www-form-urlencoded"
+              -Headers $headers
 
   /metahumano/{id}:
     get:
@@ -384,7 +396,7 @@ paths:
       tags:
         - Metahumanos
       summary: Actualizar metahumano
-      description: Actualiza un metahumano existente usando form-data (requiere autenticación)
+      description: Actualiza un metahumano existente usando application/x-www-form-urlencoded (requiere autenticación)
       security:
         - bearerAuth: []
       parameters:
@@ -392,7 +404,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/MetahumanoUpdate'
       responses:
@@ -411,22 +423,26 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Nombre_Metahumano', 'Actualizado');
+            const data = new URLSearchParams();
+            data.append('Nombre_Metahumano', 'Actualizado');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001", {
               method: "PUT",
               headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: formData
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
             
             data = { "Nombre_Metahumano": "Actualizado" }
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+            }
             
             response = requests.put(
                 "https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001",
@@ -441,14 +457,16 @@ paths:
               Nombre_Metahumano="Actualizado"
         - lang: PowerShell
           source: |
-            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $headers = @{
+                Authorization = "Bearer tu_token_jwt_aqui"
+                "Content-Type" = "application/x-www-form-urlencoded"
+            }
             $body = @{ Nombre_Metahumano="Actualizado" }
             
             Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001" `
               -Method PUT `
               -Body $body `
-              -Headers $headers `
-              -ContentType "application/x-www-form-urlencoded"
+              -Headers $headers
     delete:
       tags:
         - Metahumanos
@@ -532,13 +550,13 @@ paths:
       tags:
         - Habilidades
       summary: Crear una nueva habilidad
-      description: Crea un nuevo registro de habilidad usando form-data (requiere autenticación)
+      description: Crea un nuevo registro de habilidad usando application/x-www-form-urlencoded (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/HabilidadInput'
       responses:
@@ -555,16 +573,17 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Id_Habilidad', 'Hb0007');
-            formData.append('Nombre_Habilidad', 'Telepatía');
+            const data = new URLSearchParams();
+            data.append('Id_Habilidad', 'Hb0007');
+            data.append('Nombre_Habilidad', 'Telepatía');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/habilidad", {
               method: "POST",
               headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: formData
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -574,7 +593,10 @@ paths:
                 "Id_Habilidad": "Hb0007",
                 "Nombre_Habilidad": "Telepatía"
             }
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+            }
             
             response = requests.post(
                 "https://apirestmetahumanos-production.up.railway.app/habilidad",
@@ -590,7 +612,10 @@ paths:
               Nombre_Habilidad="Telepatía"
         - lang: PowerShell
           source: |
-            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $headers = @{
+                Authorization = "Bearer tu_token_jwt_aqui"
+                "Content-Type" = "application/x-www-form-urlencoded"
+            }
             $body = @{
                 Id_Habilidad="Hb0007"
                 Nombre_Habilidad="Telepatía"
@@ -599,8 +624,7 @@ paths:
             Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/habilidad" `
               -Method POST `
               -Body $body `
-              -Headers $headers `
-              -ContentType "application/x-www-form-urlencoded"
+              -Headers $headers
 
   /habilidad/{id}:
     get:
@@ -641,7 +665,7 @@ paths:
       tags:
         - Habilidades
       summary: Actualizar habilidad
-      description: Actualiza una habilidad existente usando form-data (requiere autenticación)
+      description: Actualiza una habilidad existente usando application/x-www-form-urlencoded (requiere autenticación)
       security:
         - bearerAuth: []
       parameters:
@@ -649,7 +673,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/HabilidadUpdate'
       responses:
@@ -668,16 +692,17 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Nombre_Habilidad', 'Vuelo Supersónico');
-            formData.append('Descripcion_Habilidad', 'Vuela a velocidades supersónicas');
+            const data = new URLSearchParams();
+            data.append('Nombre_Habilidad', 'Vuelo Supersónico');
+            data.append('Descripcion_Habilidad', 'Vuela a velocidades supersónicas');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005", {
               method: "PUT",
               headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: formData
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -687,7 +712,10 @@ paths:
               "Nombre_Habilidad": "Vuelo Supersónico",
               "Descripcion_Habilidad": "Vuela a velocidades supersónicas"
             }
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+            }
             
             response = requests.put(
                 "https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005",
@@ -703,7 +731,10 @@ paths:
               Descripcion_Habilidad="Vuela a velocidades supersónicas"
         - lang: PowerShell
           source: |
-            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $headers = @{
+                Authorization = "Bearer tu_token_jwt_aqui"
+                "Content-Type" = "application/x-www-form-urlencoded"
+            }
             $body = @{ 
               Nombre_Habilidad="Vuelo Supersónico"
               Descripcion_Habilidad="Vuela a velocidades supersónicas"
@@ -712,8 +743,7 @@ paths:
             Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005" `
               -Method PUT `
               -Body $body `
-              -Headers $headers `
-              -ContentType "application/x-www-form-urlencoded"
+              -Headers $headers
     delete:
       tags:
         - Habilidades
@@ -797,13 +827,13 @@ paths:
       tags:
         - Debilidades
       summary: Crear una nueva debilidad
-      description: Crea un nuevo registro de debilidad usando form-data (requiere autenticación)
+      description: Crea un nuevo registro de debilidad usando application/x-www-form-urlencoded (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/DebilidadInput'
       responses:
@@ -820,16 +850,17 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Id_Debilidad', 'Db0007');
-            formData.append('Nombre_Debilidad', 'Magia');
+            const data = new URLSearchParams();
+            data.append('Id_Debilidad', 'Db0007');
+            data.append('Nombre_Debilidad', 'Magia');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/debilidad", {
               method: "POST",
               headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: formData
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -839,7 +870,10 @@ paths:
                 "Id_Debilidad": "Db0007",
                 "Nombre_Debilidad": "Magia"
             }
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+            }
             
             response = requests.post(
                 "https://apirestmetahumanos-production.up.railway.app/debilidad",
@@ -855,7 +889,10 @@ paths:
               Nombre_Debilidad="Magia"
         - lang: PowerShell
           source: |
-            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $headers = @{
+                Authorization = "Bearer tu_token_jwt_aqui"
+                "Content-Type" = "application/x-www-form-urlencoded"
+            }
             $body = @{
                 Id_Debilidad="Db0007"
                 Nombre_Debilidad="Magia"
@@ -864,8 +901,7 @@ paths:
             Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/debilidad" `
               -Method POST `
               -Body $body `
-              -Headers $headers `
-              -ContentType "application/x-www-form-urlencoded"
+              -Headers $headers
 
   /debilidad/{id}:
     get:
@@ -906,7 +942,7 @@ paths:
       tags:
         - Debilidades
       summary: Actualizar debilidad
-      description: Actualiza una debilidad existente usando form-data (requiere autenticación)
+      description: Actualiza una debilidad existente usando application/x-www-form-urlencoded (requiere autenticación)
       security:
         - bearerAuth: []
       parameters:
@@ -914,7 +950,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/DebilidadUpdate'
       responses:
@@ -933,16 +969,17 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Nombre_Debilidad', 'Kryptonita Roja');
-            formData.append('Descripcion_Debilidad', 'Variante roja que causa efectos diferentes');
+            const data = new URLSearchParams();
+            data.append('Nombre_Debilidad', 'Kryptonita Roja');
+            data.append('Descripcion_Debilidad', 'Variante roja que causa efectos diferentes');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005", {
               method: "PUT",
               headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: formData
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -952,7 +989,10 @@ paths:
               "Nombre_Debilidad": "Kryptonita Roja",
               "Descripcion_Debilidad": "Variante roja que causa efectos diferentes"
             }
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+            }
             
             response = requests.put(
                 "https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005",
@@ -968,7 +1008,10 @@ paths:
               Descripcion_Debilidad="Variante roja que causa efectos diferentes"
         - lang: PowerShell
           source: |
-            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $headers = @{
+                Authorization = "Bearer tu_token_jwt_aqui"
+                "Content-Type" = "application/x-www-form-urlencoded"
+            }
             $body = @{ 
               Nombre_Debilidad="Kryptonita Roja"
               Descripcion_Debilidad="Variante roja que causa efectos diferentes"
@@ -977,8 +1020,7 @@ paths:
             Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005" `
               -Method PUT `
               -Body $body `
-              -Headers $headers `
-              -ContentType "application/x-www-form-urlencoded"
+              -Headers $headers
     delete:
       tags:
         - Debilidades
@@ -1071,13 +1113,13 @@ paths:
       tags:
         - Relaciones
       summary: Crear relación metahumano-habilidad
-      description: Crea una nueva relación entre un metahumano y una habilidad usando form-data (requiere autenticación)
+      description: Crea una nueva relación entre un metahumano y una habilidad usando application/x-www-form-urlencoded (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/RelacionMetahumanoHabilidad'
       responses:
@@ -1094,16 +1136,17 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Id_Metahumano', 'Mh0012');
-            formData.append('Id_Habilidad', 'Hb0005');
+            const data = new URLSearchParams();
+            data.append('Id_Metahumano', 'Mh0012');
+            data.append('Id_Habilidad', 'Hb0005');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad", {
               method: "POST",
               headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: formData
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -1113,7 +1156,10 @@ paths:
                 "Id_Metahumano": "Mh0012",
                 "Id_Habilidad": "Hb0005"
             }
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+            }
             
             response = requests.post(
                 "https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad",
@@ -1129,7 +1175,10 @@ paths:
               Id_Habilidad="Hb0005"
         - lang: PowerShell
           source: |
-            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $headers = @{
+                Authorization = "Bearer tu_token_jwt_aqui"
+                "Content-Type" = "application/x-www-form-urlencoded"
+            }
             $body = @{
                 Id_Metahumano="Mh0012"
                 Id_Habilidad="Hb0005"
@@ -1138,8 +1187,7 @@ paths:
             Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad" `
               -Method POST `
               -Body $body `
-              -Headers $headers `
-              -ContentType "application/x-www-form-urlencoded"
+              -Headers $headers
 
   /metahumano_habilidad/metahumano/{id}:
     get:
@@ -1325,13 +1373,13 @@ paths:
       tags:
         - Relaciones
       summary: Crear relación metahumano-debilidad
-      description: Crea una nueva relación entre un metahumano y una debilidad usando form-data (requiere autenticación)
+      description: Crea una nueva relación entre un metahumano y una debilidad usando application/x-www-form-urlencoded (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/RelacionMetahumanoDebilidad'
       responses:
@@ -1348,16 +1396,17 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            const formData = new FormData();
-            formData.append('Id_Metahumano', 'Mh0012');
-            formData.append('Id_Debilidad', 'Db0005');
+            const data = new URLSearchParams();
+            data.append('Id_Metahumano', 'Mh0012');
+            data.append('Id_Debilidad', 'Db0005');
 
             fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad", {
               method: "POST",
               headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: formData
+              body: data
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
@@ -1367,7 +1416,10 @@ paths:
                 "Id_Metahumano": "Mh0012",
                 "Id_Debilidad": "Db0005"
             }
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer tu_token_jwt_aqui"
+            }
             
             response = requests.post(
                 "https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad",
@@ -1383,7 +1435,10 @@ paths:
               Id_Debilidad="Db0005"
         - lang: PowerShell
           source: |
-            $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
+            $headers = @{
+                Authorization = "Bearer tu_token_jwt_aqui"
+                "Content-Type" = "application/x-www-form-urlencoded"
+            }
             $body = @{
                 Id_Metahumano="Mh0012"
                 Id_Debilidad="Db0005"
@@ -1392,8 +1447,7 @@ paths:
             Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad" `
               -Method POST `
               -Body $body `
-              -Headers $headers `
-              -ContentType "application/x-www-form-urlencoded"
+              -Headers $headers
 
   /metahumano_debilidad/metahumano/{id}:
     get:
@@ -1758,9 +1812,6 @@ components:
     HabilidadUpdate:
       type: object
       properties:
-        Id_Habilidad:
-          type: string
-          example: "HB0005"
         Nombre_Habilidad:
           type: string
           example: "Vuelo"
@@ -1803,9 +1854,6 @@ components:
     DebilidadUpdate:
       type: object
       properties:
-        Id_Debilidad:
-          type: string
-          example: "DB0005"
         Nombre_Debilidad:
           type: string
           example: "Kryptonita"
@@ -1877,7 +1925,7 @@ components:
   requestBodies:
     LoginRequest:
       content:
-        multipart/form-data:
+        application/x-www-form-urlencoded:
           schema:
             type: object
             properties:
