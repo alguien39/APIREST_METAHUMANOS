@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: API de Metahumanos
-  description: API REST para gestión de metahumanos, habilidades y debilidades
+  description: API REST para gestión de metahumanos, habilidades y debilidades. Todas las peticiones POST/PUT usan form-data.
   version: 1.0.0
   contact:
     name: Joham Barberena
@@ -11,10 +11,10 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
+  - url: https://apirestmetahumanos-production.up.railway.app
+    description: Servidor de producción
   - url: http://localhost:3000
     description: Servidor de desarrollo
-  - url: https://ballast.proxy.rlwy.net:54511
-    description: Servidor de producción
 
 tags:
   - name: Autenticación
@@ -35,11 +35,11 @@ paths:
       tags:
         - Autenticación
       summary: Autenticar usuario
-      description: Obtiene token JWT para autenticación
+      description: Obtiene token JWT para autenticación usando form-data
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               required:
@@ -81,45 +81,56 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/user/login", {
+            // Usando Fetch API con FormData
+            const formData = new FormData();
+            formData.append('Email', 'admin@metahumanos.com');
+            formData.append('Password', 'password123');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/user/login", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                Email: "admin@metahumanos.com",
-                Password: "password123"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            payload = {
-              "Email": "admin@metahumanos.com",
-              "Password": "password123"
+            
+            data = {
+                'Email': 'admin@metahumanos.com',
+                'Password': 'password123'
             }
-            print(requests.post("http://localhost:3000/user/login", json=payload).json())
-        - lang: Bash
+            
+            response = requests.post(
+                "https://apirestmetahumanos-production.up.railway.app/user/login",
+                data=data
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X POST http://localhost:3000/user/login \
-            -H "Content-Type: application/json" \
-            -d '{"Email":"admin@metahumanos.com","Password":"password123"}'
+            http --form POST https://apirestmetahumanos-production.up.railway.app/user/login \
+              Email="admin@metahumanos.com" \
+              Password="password123"
         - lang: PowerShell
           source: |
             $body = @{
-              Email="admin@metahumanos.com"
-              Password="password123"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/user/login" -Method POST -Body $body -ContentType "application/json"
+                Email="admin@metahumanos.com"
+                Password="password123"
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/user/login" `
+              -Method POST `
+              -Body $body `
+              -ContentType "application/x-www-form-urlencoded"
 
   /user/register:
     post:
       tags:
         - Autenticación
       summary: Registrar nuevo usuario
-      description: Crea un nuevo usuario en el sistema
+      description: Crea un nuevo usuario en el sistema usando form-data
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               required:
@@ -156,40 +167,52 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/user/register", {
+            const formData = new FormData();
+            formData.append('Id_Usuario', 'Us0001');
+            formData.append('Email', 'alguien@ejemplo.com');
+            formData.append('Password', 'password123');
+            formData.append('Rol', 'admin');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/user/register", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                Id_Usuario: "Us0001",
-                Email: "alguien@ejemplo.com",
-                Password: "password123",
-                Rol: "admin"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            payload = {
-              "Id_Usuario": "Us0001",
-              "Email": "alguien@ejemplo.com",
-              "Password": "password123",
-              "Rol": "admin"
+            
+            data = {
+                'Id_Usuario': 'Us0001',
+                'Email': 'alguien@ejemplo.com',
+                'Password': 'password123',
+                'Rol': 'admin'
             }
-            print(requests.post("http://localhost:3000/user/register", json=payload).json())
-        - lang: Bash
+            
+            response = requests.post(
+                "https://apirestmetahumanos-production.up.railway.app/user/register",
+                data=data
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X POST http://localhost:3000/user/register \
-            -H "Content-Type: application/json" \
-            -d '{"Id_Usuario":"Us0001","Email":"alguien@ejemplo.com","Password":"password123","Rol":"admin"}'
+            http --form POST https://apirestmetahumanos-production.up.railway.app/user/register \
+              Id_Usuario="Us0001" \
+              Email="alguien@ejemplo.com" \
+              Password="password123" \
+              Rol="admin"
         - lang: PowerShell
           source: |
             $body = @{
-              Id_Usuario="Us0001"
-              Email="alguien@ejemplo.com"
-              Password="password123"
-              Rol="admin"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/user/register" -Method POST -Body $body -ContentType "application/json"
+                Id_Usuario="Us0001"
+                Email="alguien@ejemplo.com"
+                Password="password123"
+                Rol="admin"
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/user/register" `
+              -Method POST `
+              -Body $body `
+              -ContentType "application/x-www-form-urlencoded"
 
   # ========== METAHUMANOS ==========
   /metahumano:
@@ -217,31 +240,30 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano")
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano")
               .then(r => r.json())
               .then(console.log);
         - lang: Python
           source: |
             import requests
-            print(requests.get("http://localhost:3000/metahumano").json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/metahumano").json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/metahumano
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/metahumano
         - lang: PowerShell
           source: |
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano" -Method GET
-
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano" -Method GET
     post:
       tags:
         - Metahumanos
       summary: Crear un nuevo metahumano
-      description: Crea un nuevo registro de metahumano (requiere autenticación)
+      description: Crea un nuevo registro de metahumano usando form-data (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/MetahumanoInput'
       responses:
@@ -258,49 +280,65 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano", {
+            const formData = new FormData();
+            formData.append('Id_MetaHumano', 'MH0006');
+            formData.append('Nombre_Metahumano', 'Nuevo');
+            formData.append('Alias', 'Example');
+            formData.append('Tipo', 'Heroe');
+            formData.append('Actividad', 'Activo');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano", {
               method: "POST",
               headers: { 
-                "Content-Type": "application/json",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: JSON.stringify({
-                Id_MetaHumano: "MH0006",
-                Nombre_Metahumano: "Nuevo",
-                Alias: "Example",
-                Tipo: "Heroe",
-                Actividad: "Activo"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            payload = {
-              "Id_MetaHumano": "MH0006",
-              "Nombre_Metahumano": "Nuevo",
-              "Alias": "Example",
-              "Tipo": "Heroe",
-              "Actividad": "Activo"
+            
+            data = {
+                "Id_MetaHumano": "MH0006",
+                "Nombre_Metahumano": "Nuevo",
+                "Alias": "Example",
+                "Tipo": "Heroe",
+                "Actividad": "Activo"
             }
-            print(requests.post("http://localhost:3000/metahumano", json=payload, headers=headers).json())
-        - lang: Bash
+            
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            
+            response = requests.post(
+                "https://apirestmetahumanos-production.up.railway.app/metahumano",
+                data=data,
+                headers=headers
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X POST http://localhost:3000/metahumano \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer tu_token_jwt_aqui" \
-            -d '{"Id_MetaHumano":"MH0006","Nombre_Metahumano":"Nuevo","Alias":"Example","Tipo":"Heroe","Actividad":"Activo"}'
+            http --form POST https://apirestmetahumanos-production.up.railway.app/metahumano \
+              Authorization:"Bearer tu_token_jwt_aqui" \
+              Id_MetaHumano="MH0006" \
+              Nombre_Metahumano="Nuevo" \
+              Alias="Example" \
+              Tipo="Heroe" \
+              Actividad="Activo"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
             $body = @{
-              Id_MetaHumano="MH0006"
-              Nombre_Metahumano="Nuevo"
-              Alias="Example"
-              Tipo="Heroe"
-              Actividad="Activo"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano" -Method POST -Body $body -ContentType "application/json" -Headers $headers
+                Id_MetaHumano="MH0006"
+                Nombre_Metahumano="Nuevo"
+                Alias="Example"
+                Tipo="Heroe"
+                Actividad="Activo"
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano" `
+              -Method POST `
+              -Body $body `
+              -Headers $headers `
+              -ContentType "application/x-www-form-urlencoded"
 
   /metahumano/{id}:
     get:
@@ -329,24 +367,24 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano/MH0001")
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001")
               .then(r => r.json())
               .then(console.log);
         - lang: Python
           source: |
             import requests
-            print(requests.get("http://localhost:3000/metahumano/MH0001").json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001").json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/metahumano/MH0001
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001
         - lang: PowerShell
           source: |
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano/MH0001" -Method GET
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001" -Method GET
     put:
       tags:
         - Metahumanos
       summary: Actualizar metahumano
-      description: Actualiza un metahumano existente (requiere autenticación)
+      description: Actualiza un metahumano existente usando form-data (requiere autenticación)
       security:
         - bearerAuth: []
       parameters:
@@ -354,7 +392,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/MetahumanoUpdate'
       responses:
@@ -373,31 +411,44 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano/MH0001", {
+            const formData = new FormData();
+            formData.append('Nombre_Metahumano', 'Actualizado');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001", {
               method: "PUT",
               headers: { 
-                "Content-Type": "application/json",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: JSON.stringify({ Nombre_Metahumano: "Actualizado" })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
+            
+            data = { "Nombre_Metahumano": "Actualizado" }
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            payload = { "Nombre_Metahumano": "Actualizado" }
-            print(requests.put("http://localhost:3000/metahumano/MH0001", json=payload, headers=headers).json())
-        - lang: Bash
+            
+            response = requests.put(
+                "https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001",
+                data=data,
+                headers=headers
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X PUT http://localhost:3000/metahumano/MH0001 \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer tu_token_jwt_aqui" \
-            -d '{"Nombre_Metahumano":"Actualizado"}'
+            http --form PUT https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001 \
+              Authorization:"Bearer tu_token_jwt_aqui" \
+              Nombre_Metahumano="Actualizado"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            $body = @{ Nombre_Metahumano="Actualizado" } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano/MH0001" -Method PUT -Body $body -ContentType "application/json" -Headers $headers
+            $body = @{ Nombre_Metahumano="Actualizado" }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001" `
+              -Method PUT `
+              -Body $body `
+              -Headers $headers `
+              -ContentType "application/x-www-form-urlencoded"
     delete:
       tags:
         - Metahumanos
@@ -423,7 +474,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano/MH0001", { 
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001", { 
               method: "DELETE",
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
@@ -433,15 +484,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.delete("http://localhost:3000/metahumano/MH0001", headers=headers).json())
+            print(requests.delete("https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X DELETE http://localhost:3000/metahumano/MH0001 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X DELETE https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano/MH0001" -Method DELETE -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano/MH0001" -Method DELETE -Headers $headers
 
   # ========== HABILIDADES ==========
   /habilidad:
@@ -464,30 +515,30 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/habilidad")
+            fetch("https://apirestmetahumanos-production.up.railway.app/habilidad")
               .then(r => r.json())
               .then(console.log);
         - lang: Python
           source: |
             import requests
-            print(requests.get("http://localhost:3000/habilidad").json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/habilidad").json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/habilidad
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/habilidad
         - lang: PowerShell
           source: |
-            Invoke-RestMethod -Uri "http://localhost:3000/habilidad" -Method GET
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/habilidad" -Method GET
     post:
       tags:
         - Habilidades
       summary: Crear una nueva habilidad
-      description: Crea un nuevo registro de habilidad (requiere autenticación)
+      description: Crea un nuevo registro de habilidad usando form-data (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/HabilidadInput'
       responses:
@@ -504,40 +555,52 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/habilidad", {
+            const formData = new FormData();
+            formData.append('Id_Habilidad', 'Hb0007');
+            formData.append('Nombre_Habilidad', 'Telepatía');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/habilidad", {
               method: "POST",
               headers: { 
-                "Content-Type": "application/json",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: JSON.stringify({
-                Id_Habilidad: "Hb0007",
-                Nombre_Habilidad: "Telepatía"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            payload = {
-              "Id_Habilidad": "Hb0007",
-              "Nombre_Habilidad": "Telepatía"
+            
+            data = {
+                "Id_Habilidad": "Hb0007",
+                "Nombre_Habilidad": "Telepatía"
             }
-            print(requests.post("http://localhost:3000/habilidad", json=payload, headers=headers).json())
-        - lang: Bash
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            
+            response = requests.post(
+                "https://apirestmetahumanos-production.up.railway.app/habilidad",
+                data=data,
+                headers=headers
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X POST http://localhost:3000/habilidad \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer tu_token_jwt_aqui" \
-            -d '{"Id_Habilidad":"Hb0007","Nombre_Habilidad":"Telepatía"}'
+            http --form POST https://apirestmetahumanos-production.up.railway.app/habilidad \
+              Authorization:"Bearer tu_token_jwt_aqui" \
+              Id_Habilidad="Hb0007" \
+              Nombre_Habilidad="Telepatía"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
             $body = @{
-              Id_Habilidad="Hb0007"
-              Nombre_Habilidad="Telepatía"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/habilidad" -Method POST -Body $body -ContentType "application/json" -Headers $headers
+                Id_Habilidad="Hb0007"
+                Nombre_Habilidad="Telepatía"
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/habilidad" `
+              -Method POST `
+              -Body $body `
+              -Headers $headers `
+              -ContentType "application/x-www-form-urlencoded"
 
   /habilidad/{id}:
     get:
@@ -561,24 +624,24 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/habilidad/Hb0005")
+            fetch("https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005")
               .then(r => r.json())
               .then(console.log);
         - lang: Python
           source: |
             import requests
-            print(requests.get("http://localhost:3000/habilidad/Hb0005").json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005").json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/habilidad/Hb0005
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005
         - lang: PowerShell
           source: |
-            Invoke-RestMethod -Uri "http://localhost:3000/habilidad/Hb0005" -Method GET
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005" -Method GET
     put:
       tags:
         - Habilidades
       summary: Actualizar habilidad
-      description: Actualiza una habilidad existente (requiere autenticación)
+      description: Actualiza una habilidad existente usando form-data (requiere autenticación)
       security:
         - bearerAuth: []
       parameters:
@@ -586,7 +649,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/HabilidadUpdate'
       responses:
@@ -605,40 +668,52 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/habilidad/Hb0005", {
+            const formData = new FormData();
+            formData.append('Nombre_Habilidad', 'Vuelo Supersónico');
+            formData.append('Descripcion_Habilidad', 'Vuela a velocidades supersónicas');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005", {
               method: "PUT",
               headers: { 
-                "Content-Type": "application/json",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: JSON.stringify({ 
-                Nombre_Habilidad: "Vuelo Supersónico",
-                Descripcion_Habilidad: "Vuela a velocidades supersónicas"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            payload = { 
+            
+            data = { 
               "Nombre_Habilidad": "Vuelo Supersónico",
               "Descripcion_Habilidad": "Vuela a velocidades supersónicas"
             }
-            print(requests.put("http://localhost:3000/habilidad/Hb0005", json=payload, headers=headers).json())
-        - lang: Bash
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            
+            response = requests.put(
+                "https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005",
+                data=data,
+                headers=headers
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X PUT http://localhost:3000/habilidad/Hb0005 \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer tu_token_jwt_aqui" \
-            -d '{"Nombre_Habilidad":"Vuelo Supersónico","Descripcion_Habilidad":"Vuela a velocidades supersónicas"}'
+            http --form PUT https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005 \
+              Authorization:"Bearer tu_token_jwt_aqui" \
+              Nombre_Habilidad="Vuelo Supersónico" \
+              Descripcion_Habilidad="Vuela a velocidades supersónicas"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
             $body = @{ 
               Nombre_Habilidad="Vuelo Supersónico"
               Descripcion_Habilidad="Vuela a velocidades supersónicas"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/habilidad/Hb0005" -Method PUT -Body $body -ContentType "application/json" -Headers $headers
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005" `
+              -Method PUT `
+              -Body $body `
+              -Headers $headers `
+              -ContentType "application/x-www-form-urlencoded"
     delete:
       tags:
         - Habilidades
@@ -664,7 +739,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/habilidad/Hb0005", { 
+            fetch("https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005", { 
               method: "DELETE",
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
@@ -674,15 +749,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.delete("http://localhost:3000/habilidad/Hb0005", headers=headers).json())
+            print(requests.delete("https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X DELETE http://localhost:3000/habilidad/Hb0005 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X DELETE https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/habilidad/Hb0005" -Method DELETE -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/habilidad/Hb0005" -Method DELETE -Headers $headers
 
   # ========== DEBILIDADES ==========
   /debilidad:
@@ -705,30 +780,30 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/debilidad")
+            fetch("https://apirestmetahumanos-production.up.railway.app/debilidad")
               .then(r => r.json())
               .then(console.log);
         - lang: Python
           source: |
             import requests
-            print(requests.get("http://localhost:3000/debilidad").json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/debilidad").json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/debilidad
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/debilidad
         - lang: PowerShell
           source: |
-            Invoke-RestMethod -Uri "http://localhost:3000/debilidad" -Method GET
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/debilidad" -Method GET
     post:
       tags:
         - Debilidades
       summary: Crear una nueva debilidad
-      description: Crea un nuevo registro de debilidad (requiere autenticación)
+      description: Crea un nuevo registro de debilidad usando form-data (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/DebilidadInput'
       responses:
@@ -745,40 +820,52 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/debilidad", {
+            const formData = new FormData();
+            formData.append('Id_Debilidad', 'Db0007');
+            formData.append('Nombre_Debilidad', 'Magia');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/debilidad", {
               method: "POST",
               headers: { 
-                "Content-Type": "application/json",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: JSON.stringify({
-                Id_Debilidad: "Db0007",
-                Nombre_Debilidad: "Magia"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            payload = {
-              "Id_Debilidad": "Db0007",
-              "Nombre_Debilidad": "Magia"
+            
+            data = {
+                "Id_Debilidad": "Db0007",
+                "Nombre_Debilidad": "Magia"
             }
-            print(requests.post("http://localhost:3000/debilidad", json=payload, headers=headers).json())
-        - lang: Bash
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            
+            response = requests.post(
+                "https://apirestmetahumanos-production.up.railway.app/debilidad",
+                data=data,
+                headers=headers
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X POST http://localhost:3000/debilidad \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer tu_token_jwt_aqui" \
-            -d '{"Id_Debilidad":"Db0007","Nombre_Debilidad":"Magia"}'
+            http --form POST https://apirestmetahumanos-production.up.railway.app/debilidad \
+              Authorization:"Bearer tu_token_jwt_aqui" \
+              Id_Debilidad="Db0007" \
+              Nombre_Debilidad="Magia"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
             $body = @{
-              Id_Debilidad="Db0007"
-              Nombre_Debilidad="Magia"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/debilidad" -Method POST -Body $body -ContentType "application/json" -Headers $headers
+                Id_Debilidad="Db0007"
+                Nombre_Debilidad="Magia"
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/debilidad" `
+              -Method POST `
+              -Body $body `
+              -Headers $headers `
+              -ContentType "application/x-www-form-urlencoded"
 
   /debilidad/{id}:
     get:
@@ -802,24 +889,24 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/debilidad/Db0005")
+            fetch("https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005")
               .then(r => r.json())
               .then(console.log);
         - lang: Python
           source: |
             import requests
-            print(requests.get("http://localhost:3000/debilidad/Db0005").json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005").json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/debilidad/Db0005
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005
         - lang: PowerShell
           source: |
-            Invoke-RestMethod -Uri "http://localhost:3000/debilidad/Db0005" -Method GET
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005" -Method GET
     put:
       tags:
         - Debilidades
       summary: Actualizar debilidad
-      description: Actualiza una debilidad existente (requiere autenticación)
+      description: Actualiza una debilidad existente usando form-data (requiere autenticación)
       security:
         - bearerAuth: []
       parameters:
@@ -827,7 +914,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/DebilidadUpdate'
       responses:
@@ -846,40 +933,52 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/debilidad/Db0005", {
+            const formData = new FormData();
+            formData.append('Nombre_Debilidad', 'Kryptonita Roja');
+            formData.append('Descripcion_Debilidad', 'Variante roja que causa efectos diferentes');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005", {
               method: "PUT",
               headers: { 
-                "Content-Type": "application/json",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: JSON.stringify({ 
-                Nombre_Debilidad: "Kryptonita Roja",
-                Descripcion_Debilidad: "Variante roja que causa efectos diferentes"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            payload = { 
+            
+            data = { 
               "Nombre_Debilidad": "Kryptonita Roja",
               "Descripcion_Debilidad": "Variante roja que causa efectos diferentes"
             }
-            print(requests.put("http://localhost:3000/debilidad/Db0005", json=payload, headers=headers).json())
-        - lang: Bash
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            
+            response = requests.put(
+                "https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005",
+                data=data,
+                headers=headers
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X PUT http://localhost:3000/debilidad/Db0005 \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer tu_token_jwt_aqui" \
-            -d '{"Nombre_Debilidad":"Kryptonita Roja","Descripcion_Debilidad":"Variante roja que causa efectos diferentes"}'
+            http --form PUT https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005 \
+              Authorization:"Bearer tu_token_jwt_aqui" \
+              Nombre_Debilidad="Kryptonita Roja" \
+              Descripcion_Debilidad="Variante roja que causa efectos diferentes"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
             $body = @{ 
               Nombre_Debilidad="Kryptonita Roja"
               Descripcion_Debilidad="Variante roja que causa efectos diferentes"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/debilidad/Db0005" -Method PUT -Body $body -ContentType "application/json" -Headers $headers
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005" `
+              -Method PUT `
+              -Body $body `
+              -Headers $headers `
+              -ContentType "application/x-www-form-urlencoded"
     delete:
       tags:
         - Debilidades
@@ -905,7 +1004,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/debilidad/Db0005", { 
+            fetch("https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005", { 
               method: "DELETE",
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
@@ -915,15 +1014,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.delete("http://localhost:3000/debilidad/Db0005", headers=headers).json())
+            print(requests.delete("https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X DELETE http://localhost:3000/debilidad/Db0005 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X DELETE https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/debilidad/Db0005" -Method DELETE -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/debilidad/Db0005" -Method DELETE -Headers $headers
 
   # ========== RELACIONES METAHUMANO-HABILIDAD ==========
   /metahumano_habilidad:
@@ -950,7 +1049,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_habilidad", {
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad", {
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
               .then(r => r.json())
@@ -959,26 +1058,26 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.get("http://localhost:3000/metahumano_habilidad", headers=headers).json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/metahumano_habilidad \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad" -Method GET -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad" -Method GET -Headers $headers
     post:
       tags:
         - Relaciones
       summary: Crear relación metahumano-habilidad
-      description: Crea una nueva relación entre un metahumano y una habilidad (requiere autenticación)
+      description: Crea una nueva relación entre un metahumano y una habilidad usando form-data (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/RelacionMetahumanoHabilidad'
       responses:
@@ -995,40 +1094,52 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_habilidad", {
+            const formData = new FormData();
+            formData.append('Id_Metahumano', 'Mh0012');
+            formData.append('Id_Habilidad', 'Hb0005');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad", {
               method: "POST",
               headers: { 
-                "Content-Type": "application/json",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: JSON.stringify({
-                Id_Metahumano: "Mh0012",
-                Id_Habilidad: "Hb0005"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            payload = {
-              "Id_Metahumano": "Mh0012",
-              "Id_Habilidad": "Hb0005"
+            
+            data = {
+                "Id_Metahumano": "Mh0012",
+                "Id_Habilidad": "Hb0005"
             }
-            print(requests.post("http://localhost:3000/metahumano_habilidad", json=payload, headers=headers).json())
-        - lang: Bash
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            
+            response = requests.post(
+                "https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad",
+                data=data,
+                headers=headers
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X POST http://localhost:3000/metahumano_habilidad \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer tu_token_jwt_aqui" \
-            -d '{"Id_Metahumano":"Mh0012","Id_Habilidad":"Hb0005"}'
+            http --form POST https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad \
+              Authorization:"Bearer tu_token_jwt_aqui" \
+              Id_Metahumano="Mh0012" \
+              Id_Habilidad="Hb0005"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
             $body = @{
-              Id_Metahumano="Mh0012"
-              Id_Habilidad="Hb0005"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad" -Method POST -Body $body -ContentType "application/json" -Headers $headers
+                Id_Metahumano="Mh0012"
+                Id_Habilidad="Hb0005"
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad" `
+              -Method POST `
+              -Body $body `
+              -Headers $headers `
+              -ContentType "application/x-www-form-urlencoded"
 
   /metahumano_habilidad/metahumano/{id}:
     get:
@@ -1056,7 +1167,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_habilidad/metahumano/Mh0012", {
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/metahumano/Mh0012", {
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
               .then(r => r.json())
@@ -1065,15 +1176,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.get("http://localhost:3000/metahumano_habilidad/metahumano/Mh0012", headers=headers).json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/metahumano/Mh0012", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/metahumano_habilidad/metahumano/Mh0012 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/metahumano/Mh0012 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad/metahumano/Mh0012" -Method GET -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/metahumano/Mh0012" -Method GET -Headers $headers
 
   /metahumano_habilidad/habilidad/{id}:
     get:
@@ -1101,7 +1212,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_habilidad/habilidad/Hb0005", {
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/habilidad/Hb0005", {
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
               .then(r => r.json())
@@ -1110,15 +1221,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.get("http://localhost:3000/metahumano_habilidad/habilidad/Hb0005", headers=headers).json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/habilidad/Hb0005", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/metahumano_habilidad/habilidad/Hb0005 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/habilidad/Hb0005 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad/habilidad/Hb0005" -Method GET -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/habilidad/Hb0005" -Method GET -Headers $headers
 
   /metahumano_habilidad/{id_habilidad}/{id_metahumano}:
     delete:
@@ -1147,7 +1258,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_habilidad/Hb0005/Mh0012", {
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/Hb0005/Mh0012", {
               method: "DELETE",
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
@@ -1157,15 +1268,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.delete("http://localhost:3000/metahumano_habilidad/Hb0005/Mh0012", headers=headers).json())
+            print(requests.delete("https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/Hb0005/Mh0012", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X DELETE http://localhost:3000/metahumano_habilidad/Hb0005/Mh0012 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X DELETE https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/Hb0005/Mh0012 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_habilidad/Hb0005/Mh0012" -Method DELETE -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_habilidad/Hb0005/Mh0012" -Method DELETE -Headers $headers
 
   # ========== RELACIONES METAHUMANO-DEBILIDAD ==========
   /metahumano_debilidad:
@@ -1192,7 +1303,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_debilidad", {
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad", {
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
               .then(r => r.json())
@@ -1201,26 +1312,26 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.get("http://localhost:3000/metahumano_debilidad", headers=headers).json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/metahumano_debilidad \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad" -Method GET -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad" -Method GET -Headers $headers
     post:
       tags:
         - Relaciones
       summary: Crear relación metahumano-debilidad
-      description: Crea una nueva relación entre un metahumano y una debilidad (requiere autenticación)
+      description: Crea una nueva relación entre un metahumano y una debilidad usando form-data (requiere autenticación)
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/RelacionMetahumanoDebilidad'
       responses:
@@ -1237,40 +1348,52 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_debilidad", {
+            const formData = new FormData();
+            formData.append('Id_Metahumano', 'Mh0012');
+            formData.append('Id_Debilidad', 'Db0005');
+
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad", {
               method: "POST",
               headers: { 
-                "Content-Type": "application/json",
                 "Authorization": "Bearer tu_token_jwt_aqui"
               },
-              body: JSON.stringify({
-                Id_Metahumano: "Mh0012",
-                Id_Debilidad: "Db0005"
-              })
+              body: formData
             }).then(r => r.json()).then(console.log);
         - lang: Python
           source: |
             import requests
-            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            payload = {
-              "Id_Metahumano": "Mh0012",
-              "Id_Debilidad": "Db0005"
+            
+            data = {
+                "Id_Metahumano": "Mh0012",
+                "Id_Debilidad": "Db0005"
             }
-            print(requests.post("http://localhost:3000/metahumano_debilidad", json=payload, headers=headers).json())
-        - lang: Bash
+            headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
+            
+            response = requests.post(
+                "https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad",
+                data=data,
+                headers=headers
+            )
+            print(response.json())
+        - lang: Bash (httpie)
           source: |
-            curl -X POST http://localhost:3000/metahumano_debilidad \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer tu_token_jwt_aqui" \
-            -d '{"Id_Metahumano":"Mh0012","Id_Debilidad":"Db0005"}'
+            http --form POST https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad \
+              Authorization:"Bearer tu_token_jwt_aqui" \
+              Id_Metahumano="Mh0012" \
+              Id_Debilidad="Db0005"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
             $body = @{
-              Id_Metahumano="Mh0012"
-              Id_Debilidad="Db0005"
-            } | ConvertTo-Json
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad" -Method POST -Body $body -ContentType "application/json" -Headers $headers
+                Id_Metahumano="Mh0012"
+                Id_Debilidad="Db0005"
+            }
+            
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad" `
+              -Method POST `
+              -Body $body `
+              -Headers $headers `
+              -ContentType "application/x-www-form-urlencoded"
 
   /metahumano_debilidad/metahumano/{id}:
     get:
@@ -1298,7 +1421,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_debilidad/metahumano/Mh0012", {
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/metahumano/Mh0012", {
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
               .then(r => r.json())
@@ -1307,15 +1430,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.get("http://localhost:3000/metahumano_debilidad/metahumano/Mh0012", headers=headers).json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/metahumano/Mh0012", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/metahumano_debilidad/metahumano/Mh0012 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/metahumano/Mh0012 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad/metahumano/Mh0012" -Method GET -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/metahumano/Mh0012" -Method GET -Headers $headers
 
   /metahumano_debilidad/debilidad/{id}:
     get:
@@ -1343,7 +1466,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_debilidad/debilidad/Db0005", {
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/debilidad/Db0005", {
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
               .then(r => r.json())
@@ -1352,15 +1475,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.get("http://localhost:3000/metahumano_debilidad/debilidad/Db0005", headers=headers).json())
+            print(requests.get("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/debilidad/Db0005", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X GET http://localhost:3000/metahumano_debilidad/debilidad/Db0005 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X GET https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/debilidad/Db0005 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad/debilidad/Db0005" -Method GET -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/debilidad/Db0005" -Method GET -Headers $headers
 
   /metahumano_debilidad/{id_debilidad}/{id_metahumano}:
     delete:
@@ -1389,7 +1512,7 @@ paths:
       x-code-samples:
         - lang: JavaScript
           source: |
-            fetch("http://localhost:3000/metahumano_debilidad/Db0005/Mh0012", {
+            fetch("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/Db0005/Mh0012", {
               method: "DELETE",
               headers: { "Authorization": "Bearer tu_token_jwt_aqui" }
             })
@@ -1399,15 +1522,15 @@ paths:
           source: |
             import requests
             headers = {"Authorization": "Bearer tu_token_jwt_aqui"}
-            print(requests.delete("http://localhost:3000/metahumano_debilidad/Db0005/Mh0012", headers=headers).json())
+            print(requests.delete("https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/Db0005/Mh0012", headers=headers).json())
         - lang: Bash
           source: |
-            curl -X DELETE http://localhost:3000/metahumano_debilidad/Db0005/Mh0012 \
-            -H "Authorization: Bearer tu_token_jwt_aqui"
+            curl -X DELETE https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/Db0005/Mh0012 \
+              -H "Authorization: Bearer tu_token_jwt_aqui"
         - lang: PowerShell
           source: |
             $headers = @{Authorization = "Bearer tu_token_jwt_aqui"}
-            Invoke-RestMethod -Uri "http://localhost:3000/metahumano_debilidad/Db0005/Mh0012" -Method DELETE -Headers $headers
+            Invoke-RestMethod -Uri "https://apirestmetahumanos-production.up.railway.app/metahumano_debilidad/Db0005/Mh0012" -Method DELETE -Headers $headers
 
 components:
   securitySchemes:
@@ -1635,6 +1758,9 @@ components:
     HabilidadUpdate:
       type: object
       properties:
+        Id_Habilidad:
+          type: string
+          example: "HB0005"
         Nombre_Habilidad:
           type: string
           example: "Vuelo"
@@ -1677,6 +1803,9 @@ components:
     DebilidadUpdate:
       type: object
       properties:
+        Id_Debilidad:
+          type: string
+          example: "DB0005"
         Nombre_Debilidad:
           type: string
           example: "Kryptonita"
@@ -1743,3 +1872,18 @@ components:
         Id_Debilidad:
           type: string
           example: "Db0005"
+
+  # Ejemplos de solicitudes
+  requestBodies:
+    LoginRequest:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              Email:
+                type: string
+                example: "admin@metahumanos.com"
+              Password:
+                type: string
+                example: "password123"
